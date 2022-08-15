@@ -5,6 +5,7 @@
 #include <QComboBox>
 #include <QStandardItem>
 #include <QStandardItemModel>
+#include <QMessageBox>
 
 #include "TimeUtils.h"
 
@@ -146,6 +147,8 @@ void AppointmentEditDelegate::setModelData(QWidget *editor, QAbstractItemModel *
             model->setData(index,QVariant(appointment.getTelephone().c_str()));
             break;
         }
+    }catch(runtime_error& e){
+        QMessageBox::critical(editor,"修改失败",e.what());
     }catch(...){
 
     }

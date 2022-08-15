@@ -6,6 +6,7 @@
 
 #include <QStringList>
 #include <QStandardItem>
+#include <QMessageBox>
 
 #include "AppointmentService.h"
 
@@ -15,7 +16,7 @@
 #include "ShowAppointmentsDialog.h"
 
 using namespace std;
-//TODO try delegate
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -66,7 +67,23 @@ void MainWindow::dataTable_edit_triggered(){
 }
 
 void MainWindow::dataTable_delete_triggered(){
-    //TODO confirm dialog
+    //Show confirm dialog
+    Department department=departmentService.getDepartment(contextMenuSelectedId);
+    QMessageBox box;
+    box.setText(("是否删除患门诊部门 "+department.getName()).c_str());
+    box.setInformativeText("此操作不可逆！");
+    box.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
+    box.setDefaultButton(QMessageBox::Ok);
+    int ret=box.exec();
+    if(ret==QMessageBox::Ok){
+        //Delete
+        try{
+            departmentService.deleteDepartment(contextMenuSelectedId);
+            displayDepartmentData();
+        }catch(runtime_error& e){
+            QMessageBox::critical(this,"删除失败",e.what());
+        }
+    }
 }
 
 void MainWindow::dataTable_appointments_triggered(){
@@ -81,10 +98,17 @@ void MainWindow::showEditDepartmentDialog(int id){
     dialog.setPreset(department);
     int ret=dialog.exec();
     if(ret==QDialog::Accepted){
-        //Update
-        departmentService.updateDepartment(dialog.getStored());
-        //Flush UI
-        displayDepartmentData();
+        try {
+            //Update
+            departmentService.updateDepartment(dialog.getStored());
+            //Flush UI
+            displayDepartmentData();
+
+            saved=false;
+        }  catch(runtime_error& e) {
+            QMessageBox::critical(this,"修改失败",e.what());
+        }
+
     }
 }
 
@@ -143,6 +167,11 @@ void MainWindow::displayDepartmentData(){
 
 void MainWindow::on_actionOpen_triggered()
 {
+    //Init data source
+    DataSource* dataSource=DataSource::getInstance();
+    dataSource->setStorageFilePath("record.txt");
+    dataSource->loadFromFile();
+    /*
     //Generate test data
         Department department1(1,"发热科",996,3*60*60*1000,5*60*60*1000,10,"校医院","88888888");
         Department department2(5,"呼吸科",888,10*60*60*1000,15*60*60*1000,5,"校医院","77777777");
@@ -165,6 +194,7 @@ void MainWindow::on_actionOpen_triggered()
 
             appointmentService.addAppointment(1, appointment);
         }
+       */
     displayDepartmentData();
 }
 
@@ -184,5 +214,23 @@ void MainWindow::on_dataTable_doubleClicked(const QModelIndex &index)
         showAppointmentsDialog(id);
     }else{
         showEditDepartmentDialog(id);
+    }
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    DataSource* dataSource=DataSource::getInstance();
+    dataSource->saveToFile();
+    saved=true;
+}
+
+void MainWindow::closeEvent(QCloseEvent* event){
+    if(!saved){
+        int ret=QMessageBox::question(this,"是否关闭","数据更改后未保存，可能引发数据丢失");
+        if(ret!=QMessageBox::Yes){
+            event->ignore();
+        }else{
+            event->accept();
+        }
     }
 }

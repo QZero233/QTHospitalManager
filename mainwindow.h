@@ -4,9 +4,9 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QPoint>
-
 #include <QMenu>
 #include <QAction>
+#include <QCloseEvent>
 
 #include "DepartmentService.h"
 
@@ -34,8 +34,12 @@ private slots:
     void dataTable_delete_triggered();
 
     void dataTable_appointments_triggered();
+    void on_actionSave_triggered();
+
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
+
+    virtual void closeEvent(QCloseEvent* event) override;
 
 private:
     Ui::MainWindow *ui;
@@ -53,5 +57,7 @@ private:
     void showEditDepartmentDialog(int id);
 
     void showAppointmentsDialog(int id);
+
+    bool saved=true;
 };
 #endif // MAINWINDOW_H

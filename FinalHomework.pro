@@ -9,6 +9,7 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    AddAppointmentDialog.cpp \
     Appointment.cpp \
     AppointmentEditDelegate.cpp \
     AppointmentService.cpp \
@@ -17,13 +18,13 @@ SOURCES += \
     DepartmentService.cpp \
     ReadOnlyDelegate.cpp \
     ShowAppointmentsDialog.cpp \
-    StorageUtils.cpp \
     TimeUtils.cpp \
     departmenteditdialog.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    AddAppointmentDialog.h \
     Appointment.h \
     AppointmentEditDelegate.h \
     AppointmentService.h \
@@ -38,6 +39,7 @@ HEADERS += \
     mainwindow.h
 
 FORMS += \
+    AddAppointmentDialog.ui \
     ShowAppointmentsDialog.ui \
     departmenteditdialog.ui \
     mainwindow.ui

@@ -2,8 +2,11 @@
 #include "ui_ShowAppointmentsDialog.h"
 
 #include "AppointmentEditDelegate.h"
+#include "AddAppointmentDialog.h"
 
 #include <QStringList>
+#include <QAction>
+#include <QMessageBox>
 
 #include "TimeUtils.h"
 
@@ -18,8 +21,19 @@ ShowAppointmentsDialog::ShowAppointmentsDialog(int departmentId,QWidget *parent)
     ui->dataTable->setModel(model);
 
     AppointmentEditDelegate* delegate=new AppointmentEditDelegate(departmentId);
-    //ui->dataTable->setItemDelegateForColumn(0,delegate);
     ui->dataTable->setItemDelegate(delegate);
+
+    //Set up table context menu
+    tableMenu=new QMenu(ui->dataTable);
+    deleteAction=new QAction("删除",ui->dataTable);
+    addAction=new QAction("添加",ui->dataTable);
+    tableMenu->addAction(deleteAction);
+    tableMenu->addAction(addAction);
+    ui->dataTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->dataTable,SIGNAL(customContextMenuRequested(QPoint)),this,
+            SLOT(dataTable_customContextMenuRequested(QPoint)));
+    connect(deleteAction,SIGNAL(triggered()),this,SLOT(dataTable_delete_triggered()));
+    connect(addAction,SIGNAL(triggered()),this,SLOT(dataTable_add_triggered()));
 
     displayAppointments();
 
@@ -30,6 +44,41 @@ ShowAppointmentsDialog::~ShowAppointmentsDialog()
     delete ui;
 }
 
+void ShowAppointmentsDialog::dataTable_customContextMenuRequested(QPoint pos){
+    QModelIndex index=ui->dataTable->indexAt(pos);
+
+    if(index.isValid()){
+        deleteAction->setVisible(true);
+        addAction->setVisible(false);
+
+        contextMenuSelectedId=index.sibling(index.row(),0).data().toInt();
+        tableMenu->exec(QCursor::pos());
+    }else{
+        //Show add menu in blank places
+        deleteAction->setVisible(false);
+        addAction->setVisible(true);
+
+        contextMenuSelectedId=-1;
+        tableMenu->exec(QCursor::pos());
+    }
+}
+
+void ShowAppointmentsDialog::dataTable_delete_triggered(){
+    //Show confirm dialog
+    Appointment appointment=service.getAppointment(departmentId,contextMenuSelectedId);
+    QMessageBox box;
+    box.setText(("是否删除患者 "+appointment.getName()+" 的预约记录？").c_str());
+    box.setInformativeText("此操作不可逆！");
+    box.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
+    box.setDefaultButton(QMessageBox::Ok);
+    int ret=box.exec();
+    if(ret==QMessageBox::Ok){
+        //Delete
+        service.deleteAppointment(departmentId,contextMenuSelectedId);
+        displayAppointments();
+    }
+}
+
 void ShowAppointmentsDialog::resizeEvent(QResizeEvent *event)
 {
     QDialog::resizeEvent(event);
@@ -37,6 +86,12 @@ void ShowAppointmentsDialog::resizeEvent(QResizeEvent *event)
     int x = this->frameGeometry().width();
     int y = this->frameGeometry().height();
     ui->dataTable->setGeometry(5,5,x*0.99,y*0.99);
+}
+
+void ShowAppointmentsDialog::dataTable_add_triggered(){
+    AddAppointmentDialog dialog;
+    dialog.exec();
+    //TODO finish it
 }
 
 void ShowAppointmentsDialog::displayAppointments(){

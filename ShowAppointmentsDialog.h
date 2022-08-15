@@ -5,6 +5,7 @@
 
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QMenu>
 
 #include "AppointmentService.h"
 
@@ -33,6 +34,17 @@ private:
     QStandardItemModel* model;
 
     AppointmentService service;
+
+    QMenu* tableMenu;
+    QAction* deleteAction;
+    QAction* addAction;
+
+    int contextMenuSelectedId=-1;
+
+private slots:
+    void dataTable_customContextMenuRequested(QPoint pos);
+    void dataTable_delete_triggered();
+    void dataTable_add_triggered();
 };
 
 #endif // SHOWAPPOINTMENTSDIALOG_H

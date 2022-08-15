@@ -1,5 +1,6 @@
 #include "AppointmentService.h"
 #include <stdexcept>
+#include <QDateTime>
 
 using namespace std;
 
@@ -38,7 +39,10 @@ void AppointmentService::addAppointment(int departmentId, const Appointment& app
 		throw runtime_error("Appointment number exceeds capacity");
 	}
 
-	//TODO check if time is not available
+    long time=QDateTime::fromSecsSinceEpoch(appointment.getAppointmentTime()).time().msecsSinceStartOfDay();
+    if(time<department.getAppointmentStartTime() || time>department.getAppointmentEndTime()){
+        throw runtime_error("预约时间不在接诊时间范围内");
+    }
 
 	department.getAppointmentsPtr()->push_back(appointment);
 	dataSourcePtr->updateDepartment(department);
@@ -59,9 +63,14 @@ void AppointmentService::deleteAppointment(int departmentId, int appointmentId) 
 	dataSourcePtr->updateDepartment(department);
 }
 
-void AppointmentService::updateAppointment(int departmentId, const Appointment& appointment) {
+void AppointmentService::updateAppointment(int departmentId, const Appointment& appointment){
 	Department department = dataSourcePtr->getDepartment(departmentId);
 	int index = getIndexById(departmentId, appointment.getId());
+
+    long time=QDateTime::fromSecsSinceEpoch(appointment.getAppointmentTime()).time().msecsSinceStartOfDay();
+    if(time<department.getAppointmentStartTime() || time>department.getAppointmentEndTime()){
+        throw runtime_error("预约时间不在接诊时间范围内");
+    }
 
 	vector<Appointment>* appointmentsPtr = department.getAppointmentsPtr();
 	(*appointmentsPtr)[index] = appointment;
