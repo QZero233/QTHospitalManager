@@ -15,9 +15,11 @@ private:
 public:
 	DepartmentService();
 
-	void addDepartment(const Department& department);
-	void deleteDepartment(int id);
-	void updateDepartment(const Department& department);
+    void checkDepartmentData(const Department& department) throw(invalid_argument);
+
+    void addDepartment(const Department& department) throw(invalid_argument);
+    void deleteDepartment(int id) throw(runtime_error);
+    void updateDepartment(const Department& department) throw(invalid_argument,runtime_error);
 	Department getDepartment(int id);
 
     vector<Department> getAllDepartments();

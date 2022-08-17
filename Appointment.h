@@ -20,6 +20,7 @@ public:
 	static const int GENDER_FEMALE = 0;
 	static const int GENDER_MALE = 1;
 
+    //TODO put argyments check into service
 	void setId(int id) {
 		this->id = id;
 	}

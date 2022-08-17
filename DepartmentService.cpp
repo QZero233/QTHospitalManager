@@ -10,11 +10,29 @@ DepartmentService::DepartmentService() {
 	dataSourcePtr = DataSource::getInstance();
 }
 
-void DepartmentService::addDepartment(const Department& department) {
+void DepartmentService::checkDepartmentData(const Department& department) throw(invalid_argument){
+    //Check appointment time
+    if(department.getAppointmentStartTime()<0 || department.getAppointmentEndTime()<0)
+        throw invalid_argument("时间必须大于0");
+
+    if(department.getAppointmentEndTime()-department.getAppointmentStartTime()<=0)
+        throw invalid_argument("结束时间不能早于开始时间");
+
+    //Check capacity
+    if(department.getCapacity()<=0)
+        throw invalid_argument("容量必须为正数");
+
+    if (department.getAppointments().size() > department.getCapacity()) {
+        throw invalid_argument("预约数量超出容量");
+    }
+}
+
+void DepartmentService::addDepartment(const Department& department) throw(invalid_argument) {
+    checkDepartmentData(department);
 	dataSourcePtr->addDepartment(department);
 }
 
-void DepartmentService::deleteDepartment(int id) {
+void DepartmentService::deleteDepartment(int id) throw(runtime_error) {
     Department department=dataSourcePtr->getDepartment(id);
     if(department.getAppointments().size()!=0){
         throw runtime_error("此门诊部门还有未处理的预约，无法删除");
@@ -22,11 +40,8 @@ void DepartmentService::deleteDepartment(int id) {
 	dataSourcePtr->deleteDepartment(id);
 }
 
-void DepartmentService::updateDepartment(const Department& department) {
-    if(department.getCapacity()<department.getAppointments().size()){
-        throw runtime_error("修改后的容量无法容纳现有的预约数量");
-    }
-
+void DepartmentService::updateDepartment(const Department& department) throw(invalid_argument,runtime_error){
+    checkDepartmentData(department);
     //Check if all appointment satisfy changed time
     vector<Appointment> appointments=department.getAppointments();
     for(Appointment appointment:appointments){

@@ -103,12 +103,11 @@ void MainWindow::showEditDepartmentDialog(int id){
             departmentService.updateDepartment(dialog.getStored());
             //Flush UI
             displayDepartmentData();
-
-            saved=false;
         }  catch(runtime_error& e) {
             QMessageBox::critical(this,"修改失败",e.what());
+        }catch(invalid_argument& e){
+            QMessageBox::critical(this,"修改失败",e.what());
         }
-
     }
 }
 
@@ -171,9 +170,10 @@ void MainWindow::on_actionOpen_triggered()
     DataSource* dataSource=DataSource::getInstance();
     dataSource->setStorageFilePath("record.txt");
     dataSource->loadFromFile();
+
     /*
     //Generate test data
-        Department department1(1,"发热科",996,3*60*60*1000,5*60*60*1000,10,"校医院","88888888");
+        Department department1(1,"发热科",996,0*60*60*1000,20*60*60*1000,10,"校医院","88888888");
         Department department2(5,"呼吸科",888,10*60*60*1000,15*60*60*1000,5,"校医院","77777777");
         Department department3(2,"检验科",666,7*60*60*1000,9*60*60*1000+48*60*1000,30,"校医院","66666666");
 
@@ -194,7 +194,7 @@ void MainWindow::on_actionOpen_triggered()
 
             appointmentService.addAppointment(1, appointment);
         }
-       */
+    */
     displayDepartmentData();
 }
 
@@ -221,16 +221,13 @@ void MainWindow::on_actionSave_triggered()
 {
     DataSource* dataSource=DataSource::getInstance();
     dataSource->saveToFile();
-    saved=true;
 }
 
 void MainWindow::closeEvent(QCloseEvent* event){
-    if(!saved){
-        int ret=QMessageBox::question(this,"是否关闭","数据更改后未保存，可能引发数据丢失");
-        if(ret!=QMessageBox::Yes){
-            event->ignore();
-        }else{
-            event->accept();
-        }
+    int ret=QMessageBox::question(this,"是否关闭","数据更改后未保存，可能引发数据丢失");
+    if(ret!=QMessageBox::Yes){
+        event->ignore();
+    }else{
+        event->accept();
     }
 }

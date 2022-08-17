@@ -15,8 +15,8 @@ private:
 	int id;
 	string name;
 	int idOfDutyDoctor;
-	long appointmentStartTime;
-	long appointmentEndTime;
+    long appointmentStartTime=-1;
+    long appointmentEndTime=-1;
 	int capacity;
 	string address;
 	string telephone;
@@ -66,10 +66,7 @@ public:
 		return idOfDutyDoctor;
 	}
 
-	void setAppointmentStartTime(long time) {
-		if (time <= 0) {
-			throw invalid_argument("Time must be greater than 0");
-		}
+    void setAppointmentStartTime(long time) {
 		appointmentStartTime = time;
 	}
 
@@ -78,9 +75,6 @@ public:
 	}
 	
 	void setAppointmentEndTime(long time) {
-		if (time <= 0) {
-			throw invalid_argument("Time must be greater than 0");
-		}
 		appointmentEndTime = time;
 	}
 
@@ -89,9 +83,6 @@ public:
 	}
 
 	void setCapacity(int capacity) {
-		if (capacity <= 0) {
-			throw invalid_argument("Capacity must be greater than 0");
-		}
 		this->capacity = capacity;
 	}
 
@@ -124,9 +115,6 @@ public:
 	}
 
 	void setAppointments(const vector<Appointment>& appointments) {
-		if (appointments.size() > capacity) {
-			throw invalid_argument("Too many appointments");
-		}
 		this->appointments = appointments;
 	}
 };

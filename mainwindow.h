@@ -57,7 +57,5 @@ private:
     void showEditDepartmentDialog(int id);
 
     void showAppointmentsDialog(int id);
-
-    bool saved=true;
 };
 #endif // MAINWINDOW_H

@@ -89,9 +89,17 @@ void ShowAppointmentsDialog::resizeEvent(QResizeEvent *event)
 }
 
 void ShowAppointmentsDialog::dataTable_add_triggered(){
-    AddAppointmentDialog dialog;
-    dialog.exec();
-    //TODO finish it
+    AddAppointmentDialog dialog(departmentId);
+    int ret=dialog.exec();
+    if(ret==QDialog::Accepted){
+        try{
+            //Add
+            service.addAppointment(departmentId,dialog.getCurrentStored());
+            displayAppointments();
+        }catch(runtime_error& e){
+            QMessageBox::critical(this,"添加失败",e.what());
+        }
+    }
 }
 
 void ShowAppointmentsDialog::displayAppointments(){
