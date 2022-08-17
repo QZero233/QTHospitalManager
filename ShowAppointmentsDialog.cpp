@@ -10,17 +10,32 @@
 
 #include "TimeUtils.h"
 
-ShowAppointmentsDialog::ShowAppointmentsDialog(int departmentId,QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ShowAppointmentsDialog),
-    departmentId(departmentId)
+ShowAppointmentsDialog::ShowAppointmentsDialog(const vector<Appointment>& appointments,
+                                               QWidget *parent) :
+  QDialog(parent),
+  ui(new Ui::ShowAppointmentsDialog)
 {
     ui->setupUi(this);
+    model=new AppointmentModel(appointments);
+    initUI();
+    addAction->setEnabled(false);
+}
 
-    model=new QStandardItemModel();
+ShowAppointmentsDialog::ShowAppointmentsDialog(int departmentId,
+                                               QWidget *parent):
+  QDialog(parent),
+  ui(new Ui::ShowAppointmentsDialog),
+  departmentId(departmentId)
+{
+    ui->setupUi(this);
+    model=new AppointmentModel(departmentId);
+    initUI();
+}
+
+void ShowAppointmentsDialog::initUI(){
     ui->dataTable->setModel(model);
 
-    AppointmentEditDelegate* delegate=new AppointmentEditDelegate(departmentId);
+    AppointmentEditDelegate* delegate=new AppointmentEditDelegate();
     ui->dataTable->setItemDelegate(delegate);
 
     //Set up table context menu
@@ -35,8 +50,8 @@ ShowAppointmentsDialog::ShowAppointmentsDialog(int departmentId,QWidget *parent)
     connect(deleteAction,SIGNAL(triggered()),this,SLOT(dataTable_delete_triggered()));
     connect(addAction,SIGNAL(triggered()),this,SLOT(dataTable_add_triggered()));
 
-    displayAppointments();
-
+    ui->dataTable->setColumnWidth(4,100);
+    ui->dataTable->setColumnWidth(5,100);
 }
 
 ShowAppointmentsDialog::~ShowAppointmentsDialog()
@@ -51,21 +66,21 @@ void ShowAppointmentsDialog::dataTable_customContextMenuRequested(QPoint pos){
         deleteAction->setVisible(true);
         addAction->setVisible(false);
 
-        contextMenuSelectedId=index.sibling(index.row(),0).data().toInt();
+        contextMenuSelectedIndex=index.row();
         tableMenu->exec(QCursor::pos());
     }else{
         //Show add menu in blank places
         deleteAction->setVisible(false);
         addAction->setVisible(true);
 
-        contextMenuSelectedId=-1;
+        contextMenuSelectedIndex=-1;
         tableMenu->exec(QCursor::pos());
     }
 }
 
 void ShowAppointmentsDialog::dataTable_delete_triggered(){
     //Show confirm dialog
-    Appointment appointment=service.getAppointment(departmentId,contextMenuSelectedId);
+    Appointment appointment=model->getAppointmentByIndex(contextMenuSelectedIndex);
     QMessageBox box;
     box.setText(("是否删除患者 "+appointment.getName()+" 的预约记录？").c_str());
     box.setInformativeText("此操作不可逆！");
@@ -74,8 +89,7 @@ void ShowAppointmentsDialog::dataTable_delete_triggered(){
     int ret=box.exec();
     if(ret==QMessageBox::Ok){
         //Delete
-        service.deleteAppointment(departmentId,contextMenuSelectedId);
-        displayAppointments();
+        model->deleteAppoinment(contextMenuSelectedIndex);
     }
 }
 
@@ -94,53 +108,9 @@ void ShowAppointmentsDialog::dataTable_add_triggered(){
     if(ret==QDialog::Accepted){
         try{
             //Add
-            service.addAppointment(departmentId,dialog.getCurrentStored());
-            displayAppointments();
-        }catch(runtime_error& e){
+            model->addAppointment(dialog.getCurrentStored());
+        }catch(exception& e){
             QMessageBox::critical(this,"添加失败",e.what());
         }
     }
-}
-
-void ShowAppointmentsDialog::displayAppointments(){
-    model->clear();
-
-    //Set header
-    QStringList list;
-    list.append("编号");
-    list.append("姓名");
-    list.append("性别");
-    list.append("年龄");
-    list.append("预约时间");
-    list.append("电话");
-    model->setHorizontalHeaderLabels(list);
-
-    //Fill data
-    vector<Appointment> appointments=service.getAllAppointments(departmentId);
-
-    QStandardItem* item;
-    for(int i=0;i<appointments.size();i++){
-        Appointment appointment=appointments[i];
-
-        item=new QStandardItem(QString("%1").arg(appointment.getId()));
-        model->setItem(i,0,item);
-
-        item=new QStandardItem(QString(appointment.getName().c_str()));
-        model->setItem(i,1,item);
-
-        item=new QStandardItem(QString(appointment.getGender()==Appointment::GENDER_MALE?"男":"女"));
-        model->setItem(i,2,item);
-
-        item=new QStandardItem(QString::number(appointment.getAge()));
-        model->setItem(i,3,item);
-
-        item=new QStandardItem(TimeUtils::formatTimeStamp(appointment.getAppointmentTime()));
-        model->setItem(i,4,item);
-
-        item=new QStandardItem(QString(appointment.getTelephone().c_str()));
-        model->setItem(i,5,item);
-    }
-
-    ui->dataTable->setColumnWidth(4,100);
-    ui->dataTable->setColumnWidth(5,100);
 }

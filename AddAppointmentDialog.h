@@ -25,8 +25,6 @@ private slots:
 private:
     Ui::AddAppointmentDialog *ui;
 
-    int departmentId;
-
     AppointmentService service;
 
     void accept() override;

@@ -8,8 +8,11 @@
 class AppointmentEditDelegate : public QItemDelegate
 {
 public:
-    AppointmentEditDelegate(int departmentId,QWidget *parent = NULL):QItemDelegate(parent),
-    departmentId(departmentId){}
+    AppointmentEditDelegate(QWidget *parent = NULL):
+        QItemDelegate(parent)
+    {
+
+    }
 
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
@@ -18,7 +21,6 @@ public:
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
 
 private:
-    int departmentId;
 };
 
 #endif // APPOINTMENTEDITDELEGATE_H

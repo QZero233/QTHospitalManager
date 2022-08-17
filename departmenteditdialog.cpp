@@ -41,6 +41,7 @@ Department DepartmentEditDIalog::getStored(){
 }
 
 void DepartmentEditDIalog::accept(){
+    currentStored.setId(ui->lineEdit_id->text().toInt());
     currentStored.setIdOfDutyDoctor(ui->lineEdit_id_doctor->text().toInt());
     currentStored.setCapacity(ui->lineEdit_capacity->text().toInt());
     currentStored.setName(ui->lineEdit_name->text().toStdString());

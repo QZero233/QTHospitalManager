@@ -2,13 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QStandardItemModel>
 #include <QPoint>
 #include <QMenu>
 #include <QAction>
 #include <QCloseEvent>
 
 #include "DepartmentService.h"
+#include "DepartmentModel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -36,6 +36,10 @@ private slots:
     void dataTable_appointments_triggered();
     void on_actionSave_triggered();
 
+    void on_actionAdd_triggered();
+
+    void on_actionSearchByTel_triggered();
+
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
 
@@ -44,18 +48,18 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    QStandardItemModel* model;
+    DepartmentModel* model;
 
     DepartmentService departmentService;
 
-    void displayDepartmentData();
-
     QMenu* tableMenu;
 
-    int contextMenuSelectedId=-1;
+    int contextMenuSelectedIndex=-1;
 
     void showEditDepartmentDialog(int id);
 
     void showAppointmentsDialog(int id);
+
+    bool saved=true;
 };
 #endif // MAINWINDOW_H

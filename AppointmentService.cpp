@@ -5,86 +5,76 @@
 using namespace std;
 
 AppointmentService::AppointmentService() {
-	dataSourcePtr = DataSource::getInstance();
+
 }
 
-int AppointmentService::getIndexById(int departmentId, int appointmentId) {
-	Department department = dataSourcePtr->getDepartment(departmentId);
-	vector<Appointment>* appointmentsPtr = department.getAppointmentsPtr();
-	for (int i = 0; i < appointmentsPtr->size(); i++) {
-		if (appointmentsPtr->at(i).getId() == appointmentId)
-			return i;
-	}
+void AppointmentService::checkAppointmentData(const Appointment& appointment) throw(invalid_argument){
+    if (appointment.getGender() != Appointment::GENDER_MALE &&
+            appointment.getGender() != Appointment::GENDER_FEMALE) {
+        throw invalid_argument("Gender must be 0 or 1");
+    }
 
-	throw runtime_error("No appointment with id " + to_string(appointmentId) + " in department " + department.getName());
+    if (appointment.getAge() <= 0) {
+        throw invalid_argument("Age must be greater than 0");
+    }
+
+    if (appointment.getAppointmentTime() <= 0) {
+        throw invalid_argument("Time must be greater than 0");
+    }
+
+    //Check time suitability
+    Department department = departmentDao.getDepartment(appointment.getDepartmentId());
+    long time=QDateTime::fromSecsSinceEpoch(appointment.getAppointmentTime()).time().msecsSinceStartOfDay();
+    if(time<department.getAppointmentStartTime() || time>department.getAppointmentEndTime()){
+        throw invalid_argument("预约时间不在接诊时间范围内");
+    }
 }
 
-bool AppointmentService::existById(int departmentId, int appointmentId) {
-	try {
-		getIndexById(departmentId, appointmentId);
-		return true;
-	}
-	catch (runtime_error& e) {
-		return false;
-	}
-}
 
-void AppointmentService::addAppointment(int departmentId, const Appointment& appointment) {
-	Department department = dataSourcePtr->getDepartment(departmentId);
-	if (existById(departmentId, appointment.getId())){
+void AppointmentService::addAppointment(const Appointment& appointment)
+throw(invalid_argument,runtime_error){
+    checkAppointmentData(appointment);
+    //Check id uniqueness
+    if (dao.existById(appointment.getId())){
 		throw invalid_argument("Appointment with id " + to_string(appointment.getId()) + " already exists");
 	}
 
-	if (department.getAppointmentsPtr()->size() >= department.getCapacity()) {
-		throw runtime_error("Appointment number exceeds capacity");
-	}
-
-    long time=QDateTime::fromSecsSinceEpoch(appointment.getAppointmentTime()).time().msecsSinceStartOfDay();
-    if(time<department.getAppointmentStartTime() || time>department.getAppointmentEndTime()){
-        throw runtime_error("预约时间不在接诊时间范围内");
+    //Check capacity
+    Department department = departmentDao.getDepartment(appointment.getDepartmentId());
+    int appointmentCount=dao.getCountByDepartmentId(appointment.getDepartmentId());
+    if (appointmentCount >= department.getCapacity()) {
+        throw runtime_error("Appointment number exceeds capacity");
     }
 
-	department.getAppointmentsPtr()->push_back(appointment);
-	dataSourcePtr->updateDepartment(department);
+    dao.addAppointment(appointment);
 }
 
-void AppointmentService::deleteAppointment(int departmentId, int appointmentId) {
-	Department department = dataSourcePtr->getDepartment(departmentId);
-	int index = getIndexById(departmentId, appointmentId);
-	
-	vector<Appointment>* appointmentsPtr = department.getAppointmentsPtr();
-	vector<Appointment> newAppointments;
-	for (int i = 0; i < appointmentsPtr->size(); i++) {
-		if (i != index)
-			newAppointments.push_back(appointmentsPtr->at(i));
-	}
-
-	department.setAppointments(newAppointments);
-	dataSourcePtr->updateDepartment(department);
+void AppointmentService::deleteAppointment(int appointmentId) {
+    dao.deleteAppointment(appointmentId);
 }
 
-void AppointmentService::updateAppointment(int departmentId, const Appointment& appointment){
-	Department department = dataSourcePtr->getDepartment(departmentId);
-	int index = getIndexById(departmentId, appointment.getId());
-
-    long time=QDateTime::fromSecsSinceEpoch(appointment.getAppointmentTime()).time().msecsSinceStartOfDay();
-    if(time<department.getAppointmentStartTime() || time>department.getAppointmentEndTime()){
-        throw runtime_error("预约时间不在接诊时间范围内");
-    }
-
-	vector<Appointment>* appointmentsPtr = department.getAppointmentsPtr();
-	(*appointmentsPtr)[index] = appointment;
-
-	dataSourcePtr->updateDepartment(department);
+void AppointmentService::updateAppointment(const Appointment& appointment)
+throw(invalid_argument){
+    checkAppointmentData(appointment);
+    dao.updateAppointment(appointment);
 }
 
-Appointment AppointmentService::getAppointment(int departmentId, int appointmentId) {
-	Department department = dataSourcePtr->getDepartment(departmentId);
-	int index = getIndexById(departmentId, appointmentId);
-	return department.getAppointmentsPtr()->at(index);
+Appointment AppointmentService::getAppointment(int appointmentId) {
+    dao.getAppointment(appointmentId);
 }
 
-vector<Appointment> AppointmentService::getAllAppointments(int departmentId){
-    Department department = dataSourcePtr->getDepartment(departmentId);
-    return department.getAppointments();
+vector<Appointment> AppointmentService::getAllAppointments(){
+    return dao.getAllAppointments();
+}
+
+vector<Appointment> AppointmentService::getAllAppointmentsByDepartmentId(int departmentId){
+    return dao.getAllByDepartmentId(departmentId);
+}
+
+Department AppointmentService::getBelongingDepartment(const Appointment& appointment){
+    return departmentDao.getDepartment(appointment.getDepartmentId());
+}
+
+vector<Appointment> AppointmentService::getAllAppointmentsByTelephone(string telephone){
+    return dao.getAllAppointmentsByTelephone(telephone);
 }

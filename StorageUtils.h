@@ -26,7 +26,7 @@ public:
     vector<Appointment> appointments;
      */
 	static void saveRecordToFile(string fileName, vector<Department>& departments) {
-        fstream fs(fileName.c_str(),ios::out);
+        /*fstream fs(fileName.c_str(),ios::out);
         for(Department department:departments){
             fs<<department.getId()<<endl
              <<department.getName()<<endl
@@ -40,7 +40,7 @@ public:
             //Write appointments
             vector<Appointment>* appointments=department.getAppointmentsPtr();
             for(int i=0;i<appointments->size();i++){
-                Appointment appointment=appointments->at(i);
+                Appointment appointment=appointments->at(i);*/
                 /*
                  * int id;
                     string name;
@@ -49,7 +49,7 @@ public:
                 int age;
                      long appointmentTime;
                  */
-                fs<<appointment.getId()<<endl
+                /*fs<<appointment.getId()<<endl
                  <<appointment.getName()<<endl
                 <<appointment.getTelephone()<<endl
                 <<appointment.getGender()<<endl
@@ -61,7 +61,7 @@ public:
 
         fs<<-1;
 
-        fs.close();
+        fs.close();*/
 	}
 
     /*
@@ -77,7 +77,7 @@ public:
     vector<Appointment> appointments;
      */
 	static vector<Department> readRecordFromFile(string fileName) {
-        fstream fs(fileName.c_str(),ios::in);
+        /*fstream fs(fileName.c_str(),ios::in);
         if(!fs)
             return vector<Department>();
 
@@ -96,7 +96,7 @@ public:
             fs>>id;
             if(id<0)
                 break;
-            fs>>name>>idOfDutyDoctor>>appointmentStartTime>>appointmentEndTime>>capacity>>address>>telephone;
+            fs>>name>>idOfDutyDoctor>>appointmentStartTime>>appointmentEndTime>>capacity>>address>>telephone;*/
 
             //Load appointments
             /*
@@ -108,7 +108,7 @@ public:
                  long appointmentTime;
              */
 
-            vector<Appointment> appointments;
+            /*vector<Appointment> appointments;
             while(true){
                 int id;
                 string name;
@@ -142,7 +142,9 @@ public:
 
 
         fs.close();
-        return result;
+        return result;*/
+
+        return vector<Department>();
 	}
 };
 

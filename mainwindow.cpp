@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QStandardItem>
 #include <QMessageBox>
+#include <QTime>
 
 #include "AppointmentService.h"
 
@@ -17,14 +18,16 @@
 
 using namespace std;
 
+//TODO disable some menus when not opened
+//TODO when in select mode, disable some context menu functions
+//TODO change titles for each dialog and window
+//TODO open file selection window to let user select profile file
+//TODO add icons for toolbars
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    model=new QStandardItemModel();
-    ui->dataTable->setModel(model);
     //Set table not editable
     ui->dataTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -53,22 +56,23 @@ void MainWindow::dataTable_customContextMenuRequested(QPoint pos){
     QModelIndex index=ui->dataTable->indexAt(pos);
 
     if(index.isValid()){
-        contextMenuSelectedId=index.sibling(index.row(),0).data().toInt();
+        contextMenuSelectedIndex=index.row();
+        //contextMenuSelectedId=index.sibling(index.row(),0).data().toInt();
         tableMenu->exec(QCursor::pos());
     }
 }
 
 void MainWindow::dataTable_edit_triggered(){
-    int id=contextMenuSelectedId;
-    if(id<0)
+    if(contextMenuSelectedIndex<0)
         return;
 
-    showEditDepartmentDialog(id);
+    showEditDepartmentDialog(model->getDepartmentByIndex(contextMenuSelectedIndex).getId());
 }
 
 void MainWindow::dataTable_delete_triggered(){
     //Show confirm dialog
-    Department department=departmentService.getDepartment(contextMenuSelectedId);
+    Department department=model->getDepartmentByIndex(contextMenuSelectedIndex);
+
     QMessageBox box;
     box.setText(("是否删除患门诊部门 "+department.getName()).c_str());
     box.setInformativeText("此操作不可逆！");
@@ -78,16 +82,16 @@ void MainWindow::dataTable_delete_triggered(){
     if(ret==QMessageBox::Ok){
         //Delete
         try{
-            departmentService.deleteDepartment(contextMenuSelectedId);
-            displayDepartmentData();
-        }catch(runtime_error& e){
+            model->deleteDepartment(contextMenuSelectedIndex);
+            saved=false;
+        }catch(exception& e){
             QMessageBox::critical(this,"删除失败",e.what());
         }
     }
 }
 
 void MainWindow::dataTable_appointments_triggered(){
-    showAppointmentsDialog(contextMenuSelectedId);
+    showAppointmentsDialog(model->getDepartmentByIndex(contextMenuSelectedIndex).getId());
 }
 
 void MainWindow::showEditDepartmentDialog(int id){
@@ -102,10 +106,10 @@ void MainWindow::showEditDepartmentDialog(int id){
             //Update
             departmentService.updateDepartment(dialog.getStored());
             //Flush UI
-            displayDepartmentData();
-        }  catch(runtime_error& e) {
-            QMessageBox::critical(this,"修改失败",e.what());
-        }catch(invalid_argument& e){
+            model->reloadFromDataSource();
+
+            saved=false;
+        }  catch(exception& e) {
             QMessageBox::critical(this,"修改失败",e.what());
         }
     }
@@ -114,54 +118,8 @@ void MainWindow::showEditDepartmentDialog(int id){
 void MainWindow::showAppointmentsDialog(int id){
     ShowAppointmentsDialog dialog(id);
     dialog.exec();
-    displayDepartmentData();
-}
-
-void MainWindow::displayDepartmentData(){
-    model->clear();
-
-    //Set header
-    QStringList list;
-    list.append("门诊编号");
-    list.append("门诊名称");
-    list.append("值班医生工号");
-    list.append("每日接诊时间");
-    list.append("剩余容量/总容量");
-    list.append("门诊地址");
-    list.append("联系电话");
-    model->setHorizontalHeaderLabels(list);
-
-    //Fill data
-    vector<Department> departments=departmentService.getAllDepartments();
-
-    QStandardItem* item;
-    for(int i=0;i<departments.size();i++){
-        Department department=departments[i];
-
-        item=new QStandardItem(QString("%1").arg(department.getId()));
-        model->setItem(i,0,item);
-
-        item=new QStandardItem(QString(department.getName().c_str()));
-        model->setItem(i,1,item);
-
-        item=new QStandardItem(QString("%1").arg(department.getIdOfDutyDoctor()));
-        model->setItem(i,2,item);
-
-        item=new QStandardItem(QString("%1-%2").arg(
-                                   TimeUtils::formatTimeFromStartOfDayByQT(department.getAppointmentStartTime()),
-                                   TimeUtils::formatTimeFromStartOfDayByQT(department.getAppointmentEndTime())));
-        model->setItem(i,3,item);
-
-        item=new QStandardItem(QString("%1/%2").arg(QString::number(department.getAppointmentsPtr()->size())
-                                                    ,QString::number(department.getCapacity())));
-        model->setItem(i,4,item);
-
-        item=new QStandardItem(QString(department.getAddress().c_str()));
-        model->setItem(i,5,item);
-
-        item=new QStandardItem(QString(department.getTelephone().c_str()));
-        model->setItem(i,6,item);
-    }
+    model->reloadFromDataSource();
+    saved=false;
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -171,9 +129,9 @@ void MainWindow::on_actionOpen_triggered()
     dataSource->setStorageFilePath("record.txt");
     dataSource->loadFromFile();
 
-    /*
+
     //Generate test data
-        Department department1(1,"发热科",996,0*60*60*1000,20*60*60*1000,10,"校医院","88888888");
+    /*    Department department1(1,"发热科",996,0*60*60*1000,23*60*60*1000,10,"校医院","88888888");
         Department department2(5,"呼吸科",888,10*60*60*1000,15*60*60*1000,5,"校医院","77777777");
         Department department3(2,"检验科",666,7*60*60*1000,9*60*60*1000+48*60*1000,30,"校医院","66666666");
 
@@ -191,11 +149,13 @@ void MainWindow::on_actionOpen_triggered()
             appointment.setGender(Appointment::GENDER_MALE);
             appointment.setAge(i);
             appointment.setAppointmentTime(time(0));
+            appointment.setDepartmentId(1);
 
-            appointmentService.addAppointment(1, appointment);
-        }
-    */
-    displayDepartmentData();
+            appointmentService.addAppointment(appointment);
+        }*/
+
+        model=new DepartmentModel(departmentService.getAllDepartments());
+        ui->dataTable->setModel(model);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -221,13 +181,58 @@ void MainWindow::on_actionSave_triggered()
 {
     DataSource* dataSource=DataSource::getInstance();
     dataSource->saveToFile();
+    saved=true;
 }
 
 void MainWindow::closeEvent(QCloseEvent* event){
-    int ret=QMessageBox::question(this,"是否关闭","数据更改后未保存，可能引发数据丢失");
-    if(ret!=QMessageBox::Yes){
-        event->ignore();
+    if(!saved){
+        int ret=QMessageBox::question(this,"是否关闭","数据更改后未保存，可能引发数据丢失");
+        if(ret!=QMessageBox::Yes){
+            event->ignore();
+        }else{
+            event->accept();
+        }
     }else{
         event->accept();
     }
+}
+
+void MainWindow::on_actionAdd_triggered()
+{
+    //Get suitable id for it
+    int biggestId=0;
+    vector<Department> departments=departmentService.getAllDepartments();
+    for(Department department:departments){
+        if(department.getId()>biggestId)
+            biggestId=department.getId();
+    }
+    biggestId++;
+
+
+    Department preset(biggestId,"",0,QTime::currentTime().msecsSinceStartOfDay(),
+                     QTime::currentTime().msecsSinceStartOfDay(),1,"","" );
+
+    DepartmentEditDIalog dialog;
+    dialog.setIdEditable(true);
+    dialog.setPreset(preset);
+    int ret=dialog.exec();
+    if(ret==QDialog::Accepted){
+        try {
+            //Add
+            model->addDepartment(dialog.getStored());
+            saved=false;
+        }  catch(exception& e) {
+            QMessageBox::critical(this,"添加失败",e.what());
+        }
+    }
+}
+
+void MainWindow::on_actionSearchByTel_triggered()
+{
+    vector<Appointment> appointments=AppointmentService().getAllAppointmentsByTelephone("1919810");
+
+    ShowAppointmentsDialog dialog(appointments);
+    dialog.exec();
+    model->reloadFromDataSource();
+    saved=false;
 }

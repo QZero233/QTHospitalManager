@@ -21,8 +21,6 @@ private:
 	string address;
 	string telephone;
 
-	vector<Appointment> appointments;
-
 public:
 	Department() :
 	id(-1),name("empty"),idOfDutyDoctor(-1),appointmentStartTime(-1),appointmentEndTime(-1),
@@ -104,18 +102,6 @@ public:
 
 	string getTelephone() const {
 		return telephone;
-	}
-
-	vector<Appointment> getAppointments() const {
-		return appointments;
-	}
-
-	vector<Appointment>* getAppointmentsPtr() {
-		return &appointments;
-	}
-
-	void setAppointments(const vector<Appointment>& appointments) {
-		this->appointments = appointments;
 	}
 };
 

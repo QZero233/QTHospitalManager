@@ -31,6 +31,8 @@ QWidget* AppointmentEditDelegate::createEditor(QWidget *parent,
     }
     case 4://Appointment time
         return new QDateTimeEdit(parent);
+    case 6:
+        return NULL;
     default:
         return QItemDelegate::createEditor(parent,option,index);
     }
@@ -38,24 +40,20 @@ QWidget* AppointmentEditDelegate::createEditor(QWidget *parent,
 }
 
 void AppointmentEditDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const{
-    AppointmentService service;
-
-    int id=index.sibling(index.row(),0).data().toInt();
-    Appointment appointment=service.getAppointment(departmentId,id);
-
+    QVariant data=index.model()->data(index,Qt::EditRole);
 
     int column=index.column();
     switch(column){
     case 1://Name
     {
         QLineEdit* edit=(QLineEdit*)editor;
-        edit->setText(appointment.getName().c_str());
+        edit->setText(data.toString());
     }
         break;
     case 2://Gender
     {
         QComboBox* box=(QComboBox*)editor;
-        if(appointment.getGender()==Appointment::GENDER_MALE){
+        if(data.toInt()==Appointment::GENDER_MALE){
             box->setCurrentIndex(0);
         }else{
             box->setCurrentIndex(1);
@@ -65,91 +63,62 @@ void AppointmentEditDelegate::setEditorData(QWidget *editor, const QModelIndex &
     case 3://Age
     {
         QSpinBox* spinBox=(QSpinBox*)editor;
-        spinBox->setValue(appointment.getAge());
+        spinBox->setValue(data.toInt());
     }
         break;
     case 4://Time
     {
         QDateTimeEdit* edit=(QDateTimeEdit*)editor;
-        edit->setDateTime(QDateTime::fromSecsSinceEpoch(appointment.getAppointmentTime()));
+        edit->setDateTime(QDateTime::fromSecsSinceEpoch(data.toLongLong()));
     }
         break;
     case 5:
     {
         QLineEdit* edit=(QLineEdit*)editor;
-        edit->setText(appointment.getTelephone().c_str());
+        edit->setText(data.toString());
     }
         break;
     }
 }
 
 void AppointmentEditDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const{
-    AppointmentService service;
-
-    int id=index.sibling(index.row(),0).data().toInt();
-    Appointment appointment=service.getAppointment(departmentId,id);
-
-    try{
-        int column=index.column();
-        switch(column){
-        case 1://Name
-        {
-            QLineEdit* edit=(QLineEdit*)editor;
-            appointment.setName(edit->text().toStdString());
-        }
-            break;
-        case 2://Gender
-        {
-            QComboBox* box=(QComboBox*)editor;
-            if(box->currentIndex()==0){
-                appointment.setGender(Appointment::GENDER_MALE);
-            }else{
-                appointment.setGender(Appointment::GENDER_FEMALE);
-            }
-        }
-            break;
-        case 3://Age
-        {
-            QSpinBox* spinBox=(QSpinBox*)editor;
-            appointment.setAge(spinBox->value());
-        }
-            break;
-        case 4://Time
-        {
-            QDateTimeEdit* edit=(QDateTimeEdit*)editor;
-            appointment.setAppointmentTime(edit->dateTime().toSecsSinceEpoch());
-        }
-            break;
-        case 5:
-        {
-            QLineEdit* edit=(QLineEdit*)editor;
-            appointment.setTelephone(edit->text().toStdString());
-        }
-            break;
-        }
-
-        service.updateAppointment(departmentId,appointment);
-        //Update model
-        switch(column){
-        case 1:
-            model->setData(index,QVariant(appointment.getName().c_str()));
-            break;
-        case 2:
-            model->setData(index,QVariant(appointment.getGender()==Appointment::GENDER_MALE?"男":"女"));
-            break;
-        case 3:
-            model->setData(index,QVariant(appointment.getAge()));
-            break;
-        case 4:
-            model->setData(index,QVariant(TimeUtils::formatTimeStamp(appointment.getAppointmentTime())));
-            break;
-        case 5:
-            model->setData(index,QVariant(appointment.getTelephone().c_str()));
-            break;
-        }
-    }catch(runtime_error& e){
-        QMessageBox::critical(editor,"修改失败",e.what());
-    }catch(...){
-
+    int column=index.column();
+    switch(column){
+    case 1://Name
+    {
+        QLineEdit* edit=(QLineEdit*)editor;
+        model->setData(index,edit->text());
     }
+        break;
+    case 2://Gender
+    {
+        QComboBox* box=(QComboBox*)editor;
+        int gender=Appointment::GENDER_MALE;
+        if(box->currentIndex()==1){
+            gender=Appointment::GENDER_FEMALE;
+        }
+        model->setData(index,gender);
+    }
+        break;
+    case 3://Age
+    {
+        QSpinBox* spinBox=(QSpinBox*)editor;
+        model->setData(index,spinBox->value());
+    }
+        break;
+    case 4://Time
+    {
+        QDateTimeEdit* edit=(QDateTimeEdit*)editor;
+        model->setData(index,edit->dateTime().toSecsSinceEpoch());
+    }
+        break;
+    case 5:
+    {
+        QLineEdit* edit=(QLineEdit*)editor;
+        model->setData(index,edit->text());
+    }
+        break;
+    }
+        //QMessageBox::critical(editor,"修改失败",e.what());
+
 }

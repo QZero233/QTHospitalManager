@@ -5,8 +5,7 @@
 
 AddAppointmentDialog::AddAppointmentDialog(int departmentId,QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AddAppointmentDialog),
-    departmentId(departmentId)
+    ui(new Ui::AddAppointmentDialog)
 {
     ui->setupUi(this);
 
@@ -25,6 +24,8 @@ AddAppointmentDialog::AddAppointmentDialog(int departmentId,QWidget *parent) :
     ui->dateTimeEdit_time->setDateTime(time);
     ui->dateTimeEdit_time->setMinimumDate(QDate::currentDate());
     ui->dateTimeEdit_time->setTimeRange(start,end);
+
+    currentStored.setDepartmentId(departmentId);
 }
 
 AddAppointmentDialog::~AddAppointmentDialog()
@@ -34,8 +35,8 @@ AddAppointmentDialog::~AddAppointmentDialog()
 
 void AddAppointmentDialog::on_pushButton_clicked()
 {
-    vector<Appointment> appointments=service.getAllAppointments(departmentId);
-    int biggestId=1;
+    vector<Appointment> appointments=service.getAllAppointments();
+    int biggestId=0;
     for(Appointment appointment:appointments){
         if(appointment.getId()>biggestId)
             biggestId=appointment.getId();

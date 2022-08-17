@@ -41,7 +41,22 @@
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
    </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>门诊</string>
+    </property>
+    <addaction name="actionAdd"/>
+    <addaction name="actionSelectDepartment"/>
+   </widget>
+   <widget class="QMenu" name="menu_3">
+    <property name="title">
+     <string>查询</string>
+    </property>
+    <addaction name="actionSearchByTel"/>
+   </widget>
    <addaction name="menu"/>
+   <addaction name="menu_2"/>
+   <addaction name="menu_3"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -56,6 +71,11 @@
    </attribute>
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionAdd"/>
+   <addaction name="actionSelectDepartment"/>
+   <addaction name="separator"/>
+   <addaction name="actionSearchByTel"/>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -65,6 +85,21 @@
   <action name="actionSave">
    <property name="text">
     <string>保存</string>
+   </property>
+  </action>
+  <action name="actionAdd">
+   <property name="text">
+    <string>添加门诊</string>
+   </property>
+  </action>
+  <action name="actionSearchByTel">
+   <property name="text">
+    <string>根据电话查询预约</string>
+   </property>
+  </action>
+  <action name="actionSelectDepartment">
+   <property name="text">
+    <string>筛选门诊</string>
    </property>
   </action>
  </widget>

@@ -15,12 +15,12 @@ private:
 	int gender;
 	int age;
 	long appointmentTime;
+    int departmentId;
 
 public:
 	static const int GENDER_FEMALE = 0;
 	static const int GENDER_MALE = 1;
 
-    //TODO put argyments check into service
 	void setId(int id) {
 		this->id = id;
 	}
@@ -46,10 +46,6 @@ public:
 	}
 
 	void setGender(int gender) {
-		if (gender != 0 && gender != 1) {
-			throw invalid_argument("Gender must be 0 or 1");
-		}
-
 		this->gender = gender;
 	}
 
@@ -58,10 +54,6 @@ public:
 	}
 
 	void setAge(int age) {
-		if (age <= 0) {
-			throw invalid_argument("Age must be greater than 0");
-		}
-
 		this->age = age;
 	}
 
@@ -70,16 +62,20 @@ public:
 	}
 
 	void setAppointmentTime(long time) {
-		if (time <= 0) {
-			throw invalid_argument("Time must be greater than 0");
-		}
-
 		appointmentTime = time;
 	}
 
 	long getAppointmentTime() const {
 		return appointmentTime;
 	}
+
+    void setDepartmentId(int id){
+        this->departmentId=id;
+    }
+
+    int getDepartmentId() const{
+        return departmentId;
+    }
 	
 };
 #endif

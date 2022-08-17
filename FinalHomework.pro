@@ -10,11 +10,13 @@ CONFIG += c++11
 
 SOURCES += \
     AddAppointmentDialog.cpp \
-    Appointment.cpp \
+    AppointmentDao.cpp \
     AppointmentEditDelegate.cpp \
+    AppointmentModel.cpp \
     AppointmentService.cpp \
     DataSource.cpp \
-    Department.cpp \
+    DepartmentDao.cpp \
+    DepartmentModel.cpp \
     DepartmentService.cpp \
     ReadOnlyDelegate.cpp \
     ShowAppointmentsDialog.cpp \
@@ -26,10 +28,14 @@ SOURCES += \
 HEADERS += \
     AddAppointmentDialog.h \
     Appointment.h \
+    AppointmentDao.h \
     AppointmentEditDelegate.h \
+    AppointmentModel.h \
     AppointmentService.h \
     DataSource.h \
     Department.h \
+    DepartmentDao.h \
+    DepartmentModel.h \
     DepartmentService.h \
     ReadOnlyDelegate.h \
     ShowAppointmentsDialog.h \

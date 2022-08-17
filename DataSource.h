@@ -12,6 +12,8 @@ class DataSource
 {
 private:
 	vector<Department> departments;
+    vector<Appointment> appointments;
+
 	string storageFileName;
 
 	static DataSource* instance;
@@ -20,20 +22,14 @@ private:
 public:
 	static DataSource* getInstance();
 
-	int getIndexById(int id);
-	bool existById(int id);
-
 	void setStorageFilePath(const string& fileName);
 
 	void loadFromFile();
 	void saveToFile();
 
-	void addDepartment(const Department& department);
-	void deleteDepartment(int id);
-	void updateDepartment(const Department& department);
-	Department getDepartment(int id);
+    vector<Department>* getDepartmentsPtr();
 
-    vector<Department> getAllDepartments();
+    vector<Appointment>* getAppointmentsPtr();
 };
 
 

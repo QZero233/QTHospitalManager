@@ -9,6 +9,8 @@
 
 #include "AppointmentService.h"
 
+#include "AppointmentModel.h"
+
 namespace Ui {
 class ShowAppointmentsDialog;
 }
@@ -18,6 +20,7 @@ class ShowAppointmentsDialog : public QDialog
     Q_OBJECT
 
 public:
+    explicit ShowAppointmentsDialog(const vector<Appointment>& appointments,QWidget *parent = nullptr);
     explicit ShowAppointmentsDialog(int departmentId,QWidget *parent = nullptr);
     ~ShowAppointmentsDialog();
 
@@ -27,11 +30,11 @@ protected:
 private:
     Ui::ShowAppointmentsDialog *ui;
 
-    int departmentId;
+    void initUI();
 
     void displayAppointments();
 
-    QStandardItemModel* model;
+    AppointmentModel* model;
 
     AppointmentService service;
 
@@ -39,8 +42,8 @@ private:
     QAction* deleteAction;
     QAction* addAction;
 
-    int contextMenuSelectedId=-1;
-
+    int contextMenuSelectedIndex=-1;
+    int departmentId=-1;
 private slots:
     void dataTable_customContextMenuRequested(QPoint pos);
     void dataTable_delete_triggered();

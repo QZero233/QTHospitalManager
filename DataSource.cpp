@@ -1,7 +1,7 @@
 #include "DataSource.h"
-#include "StorageUtils.h"
 
 #include <stdexcept>
+#include <fstream>
 
 using namespace std;
 
@@ -13,65 +13,128 @@ DataSource* DataSource::getInstance() {
 	return instance;
 }
 
-int DataSource::getIndexById(int id) {
-	for (int i = 0; i < departments.size(); i++) {
-		if (departments[i].getId() == id)
-			return i;
-	}
-
-	throw runtime_error("Can not find department with given id");
-}
-
-bool DataSource::existById(int id) {
-	try {
-		getIndexById(id);
-		return true;
-	}
-	catch (runtime_error& e) {
-		return false;
-	}
-}
-
 void DataSource::setStorageFilePath(const string& fileName) {
 	storageFileName = fileName;
 }
 
 void DataSource::loadFromFile() {
-	departments = StorageUtils::readRecordFromFile(storageFileName);
+    fstream fs(storageFileName,ios::in);
+    //Departments first
+    /*
+     * int id;
+    string name;
+    int idOfDutyDoctor;
+    long appointmentStartTime=-1;
+    long appointmentEndTime=-1;
+    int capacity;
+    string address;
+    string telephone;
+    */
+    departments.clear();
+    appointments.clear();
+    while(true){
+        int id;
+        fs>>id;
+        if(id==-1)
+            break;
+
+        string name;
+        int idOfDutyDoctor;
+        long appointmentStartTime=-1;
+        long appointmentEndTime=-1;
+        int capacity;
+        string address;
+        string telephone;
+
+        fs>>name>>idOfDutyDoctor>>appointmentStartTime>>appointmentEndTime>>capacity>>address>>telephone;
+
+        departments.push_back(Department(id,name,idOfDutyDoctor,appointmentStartTime,appointmentEndTime,
+                                         capacity,address,telephone));
+    }
+
+    while(true){
+        int id;
+        fs>>id;
+        if(id==-1)
+            break;
+
+        string name;
+        string telephone;
+        int gender;
+        int age;
+        long appointmentTime;
+        int departmentId;
+
+        fs>>name>>telephone>>gender>>age>>appointmentTime>>departmentId;
+
+        Appointment appointment;
+        appointment.setId(id);
+        appointment.setName(name);
+        appointment.setTelephone(telephone);
+        appointment.setAge(age);
+        appointment.setGender(gender);
+        appointment.setAppointmentTime(appointmentTime);
+        appointment.setDepartmentId(departmentId);
+
+        appointments.push_back(appointment);
+    }
+
+    fs.close();
 }
 
 void DataSource::saveToFile() {
-	StorageUtils::saveRecordToFile(storageFileName, departments);
+    //Departments first
+    /*
+     * int id;
+    string name;
+    int idOfDutyDoctor;
+    long appointmentStartTime=-1;
+    long appointmentEndTime=-1;
+    int capacity;
+    string address;
+    string telephone;
+    */
+    fstream fs(storageFileName,ios::out);
+    for(Department department:departments){
+        fs<<department.getId()<<endl
+         <<department.getName()<<endl
+        <<department.getIdOfDutyDoctor()<<endl
+        <<department.getAppointmentStartTime()<<endl
+        <<department.getAppointmentEndTime()<<endl
+        <<department.getCapacity()<<endl
+        <<department.getAddress()<<endl
+        <<department.getTelephone()<<endl;
+    }
+    fs<<-1<<endl;
+
+    //Then appointments
+    /*
+     * int id;
+    string name;
+    string telephone;
+    int gender;
+    int age;
+    long appointmentTime;
+    int departmentId;
+    */
+    for(Appointment appointment:appointments){
+        fs<<appointment.getId()<<endl
+         <<appointment.getName()<<endl
+        <<appointment.getTelephone()<<endl
+        <<appointment.getGender()<<endl
+        <<appointment.getAge()<<endl
+        <<appointment.getAppointmentTime()<<endl
+        <<appointment.getDepartmentId()<<endl;
+    }
+    fs<<-1;
+
+    fs.close();
 }
 
-void DataSource::addDepartment(const Department& department) {
-	if (existById(department.getId())) {
-		throw invalid_argument("Can not add a department with an existing id");
-	}
-	departments.push_back(department);
+vector<Department>* DataSource::getDepartmentsPtr(){
+    return &departments;
 }
 
-void DataSource::deleteDepartment(int id) {
-	int index = getIndexById(id);
-
-	vector<Department> backup = departments;
-	departments = vector<Department>();
-	for (int i = 0; i < backup.size(); i++) {
-		if (i != index)
-			departments.push_back(backup[i]);
-	}
-}
-
-void DataSource::updateDepartment(const Department& department) {
-	int index = getIndexById(department.getId());
-	departments[index] = department;
-}
-
-Department DataSource::getDepartment(int id) {
-	int index = getIndexById(id);
-	return departments[index];
-}
-
-vector<Department> DataSource::getAllDepartments(){
-    return departments;
+vector<Appointment>* DataSource::getAppointmentsPtr(){
+    return &appointments;
 }
