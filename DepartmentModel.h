@@ -23,6 +23,8 @@ public:
     Department getDepartmentByIndex(int index);
 
     void reloadFromDataSource();
+
+    void setDepartmentsAndReload(const vector<Department>& departments);
 private:
     vector<Department> departments;
 

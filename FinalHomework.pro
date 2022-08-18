@@ -18,7 +18,9 @@ SOURCES += \
     DepartmentDao.cpp \
     DepartmentModel.cpp \
     DepartmentService.cpp \
+    InputTelDialog.cpp \
     ReadOnlyDelegate.cpp \
+    SelectDepartmentDialog.cpp \
     ShowAppointmentsDialog.cpp \
     TimeUtils.cpp \
     departmenteditdialog.cpp \
@@ -37,7 +39,9 @@ HEADERS += \
     DepartmentDao.h \
     DepartmentModel.h \
     DepartmentService.h \
+    InputTelDialog.h \
     ReadOnlyDelegate.h \
+    SelectDepartmentDialog.h \
     ShowAppointmentsDialog.h \
     StorageUtils.h \
     TimeUtils.h \
@@ -46,6 +50,8 @@ HEADERS += \
 
 FORMS += \
     AddAppointmentDialog.ui \
+    InputTelDialog.ui \
+    SelectDepartmentDialog.ui \
     ShowAppointmentsDialog.ui \
     departmenteditdialog.ui \
     mainwindow.ui
@@ -54,3 +60,8 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES +=
+
+RESOURCES += \
+    icons.qrc

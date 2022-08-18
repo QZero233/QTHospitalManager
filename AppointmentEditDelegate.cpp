@@ -30,7 +30,10 @@ QWidget* AppointmentEditDelegate::createEditor(QWidget *parent,
         return spinBox;
     }
     case 4://Appointment time
-        return new QDateTimeEdit(parent);
+    {
+        QDateTimeEdit* dateTimeEdit=new QDateTimeEdit(parent);
+        return dateTimeEdit;
+    }
     case 6:
         return NULL;
     default:
@@ -82,43 +85,45 @@ void AppointmentEditDelegate::setEditorData(QWidget *editor, const QModelIndex &
 }
 
 void AppointmentEditDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const{
-    int column=index.column();
-    switch(column){
-    case 1://Name
-    {
-        QLineEdit* edit=(QLineEdit*)editor;
-        model->setData(index,edit->text());
-    }
-        break;
-    case 2://Gender
-    {
-        QComboBox* box=(QComboBox*)editor;
-        int gender=Appointment::GENDER_MALE;
-        if(box->currentIndex()==1){
-            gender=Appointment::GENDER_FEMALE;
+    try{
+        int column=index.column();
+        switch(column){
+        case 1://Name
+        {
+            QLineEdit* edit=(QLineEdit*)editor;
+            model->setData(index,edit->text());
         }
-        model->setData(index,gender);
+            break;
+        case 2://Gender
+        {
+            QComboBox* box=(QComboBox*)editor;
+            int gender=Appointment::GENDER_MALE;
+            if(box->currentIndex()==1){
+                gender=Appointment::GENDER_FEMALE;
+            }
+            model->setData(index,gender);
+        }
+            break;
+        case 3://Age
+        {
+            QSpinBox* spinBox=(QSpinBox*)editor;
+            model->setData(index,spinBox->value());
+        }
+            break;
+        case 4://Time
+        {
+            QDateTimeEdit* edit=(QDateTimeEdit*)editor;
+            model->setData(index,edit->dateTime().toSecsSinceEpoch());
+        }
+            break;
+        case 5:
+        {
+            QLineEdit* edit=(QLineEdit*)editor;
+            model->setData(index,edit->text());
+        }
+            break;
+        }
+    }catch(exception& e){
+        QMessageBox::critical(editor,"修改失败",e.what());
     }
-        break;
-    case 3://Age
-    {
-        QSpinBox* spinBox=(QSpinBox*)editor;
-        model->setData(index,spinBox->value());
-    }
-        break;
-    case 4://Time
-    {
-        QDateTimeEdit* edit=(QDateTimeEdit*)editor;
-        model->setData(index,edit->dateTime().toSecsSinceEpoch());
-    }
-        break;
-    case 5:
-    {
-        QLineEdit* edit=(QLineEdit*)editor;
-        model->setData(index,edit->text());
-    }
-        break;
-    }
-        //QMessageBox::critical(editor,"修改失败",e.what());
-
 }

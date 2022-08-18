@@ -66,7 +66,7 @@ QVariant DepartmentModel::headerData(int section, Qt::Orientation orientation, i
         case 3:
             return "每日接诊时间";
         case 4:
-            return "剩余容量/总容量";
+            return "当前预约数/总容量";
         case 5:
             return "门诊地址";
         case 6:
@@ -127,5 +127,10 @@ void DepartmentModel::reloadFromDataSource(){
 
     emit dataChanged(topLeft, bottomRight);
     emit layoutChanged();
+}
+
+void DepartmentModel::setDepartmentsAndReload(const vector<Department>& departments){
+    this->departments=departments;
+    reloadFromDataSource();
 }
 

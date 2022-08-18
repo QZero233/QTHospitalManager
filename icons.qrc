@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>save.png</file>
+        <file>open.png</file>
+        <file>add.png</file>
+        <file>select.png</file>
+        <file>by_tel.png</file>
+        <file>show_all.png</file>
+        <file>today.png</file>
+    </qresource>
+</RCC>

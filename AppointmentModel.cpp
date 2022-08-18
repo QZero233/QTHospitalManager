@@ -117,17 +117,11 @@ bool AppointmentModel::setData(const QModelIndex &index, const QVariant &value, 
         appointment.setTelephone(value.toString().toStdString());
     }
 
-    try{
-        service.updateAppointment(appointment);
-        appointments[row]=appointment;
+    service.updateAppointment(appointment);
+    appointments[row]=appointment;
 
-        emit dataChanged(index, index, {role});
-        return true;
-    }catch(exception& e){
-        return false;
-    }
-
-
+    emit dataChanged(index, index, {role});
+    return true;
 }
 
 Qt::ItemFlags AppointmentModel::flags(const QModelIndex &index) const {

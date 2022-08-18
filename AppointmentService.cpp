@@ -36,14 +36,14 @@ throw(invalid_argument,runtime_error){
     checkAppointmentData(appointment);
     //Check id uniqueness
     if (dao.existById(appointment.getId())){
-		throw invalid_argument("Appointment with id " + to_string(appointment.getId()) + " already exists");
+        throw invalid_argument("已经有ID为" + to_string(appointment.getId()) + "的预约信息存在");
 	}
 
     //Check capacity
     Department department = departmentDao.getDepartment(appointment.getDepartmentId());
     int appointmentCount=dao.getCountByDepartmentId(appointment.getDepartmentId());
     if (appointmentCount >= department.getCapacity()) {
-        throw runtime_error("Appointment number exceeds capacity");
+        throw runtime_error("预约数量超过容量");
     }
 
     dao.addAppointment(appointment);

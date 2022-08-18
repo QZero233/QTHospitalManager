@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>主窗口</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTableView" name="dataTable">
@@ -47,12 +47,14 @@
     </property>
     <addaction name="actionAdd"/>
     <addaction name="actionSelectDepartment"/>
+    <addaction name="actionshowAll"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
      <string>查询</string>
     </property>
     <addaction name="actionSearchByTel"/>
+    <addaction name="actiongetTodayAppointments"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
@@ -74,35 +76,77 @@
    <addaction name="separator"/>
    <addaction name="actionAdd"/>
    <addaction name="actionSelectDepartment"/>
+   <addaction name="actionshowAll"/>
    <addaction name="separator"/>
+   <addaction name="actiongetTodayAppointments"/>
    <addaction name="actionSearchByTel"/>
   </widget>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/open.png</normaloff>:/icon/open.png</iconset>
+   </property>
    <property name="text">
     <string>打开</string>
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/save.png</normaloff>:/icon/save.png</iconset>
+   </property>
    <property name="text">
     <string>保存</string>
    </property>
   </action>
   <action name="actionAdd">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/add.png</normaloff>:/icon/add.png</iconset>
+   </property>
    <property name="text">
     <string>添加门诊</string>
    </property>
   </action>
   <action name="actionSearchByTel">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/by_tel.png</normaloff>:/icon/by_tel.png</iconset>
+   </property>
    <property name="text">
     <string>根据电话查询预约</string>
    </property>
   </action>
   <action name="actionSelectDepartment">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/select.png</normaloff>:/icon/select.png</iconset>
+   </property>
    <property name="text">
     <string>筛选门诊</string>
    </property>
   </action>
+  <action name="actionshowAll">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/show_all.png</normaloff>:/icon/show_all.png</iconset>
+   </property>
+   <property name="text">
+    <string>显示全部门诊</string>
+   </property>
+  </action>
+  <action name="actiongetTodayAppointments">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/today.png</normaloff>:/icon/today.png</iconset>
+   </property>
+   <property name="text">
+    <string>当日预约信息</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

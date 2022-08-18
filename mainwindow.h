@@ -40,6 +40,12 @@ private slots:
 
     void on_actionSearchByTel_triggered();
 
+    void on_actionshowAll_triggered();
+
+    void on_actionSelectDepartment_triggered();
+
+    void on_actiongetTodayAppointments_triggered();
+
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
 
@@ -53,6 +59,10 @@ private:
     DepartmentService departmentService;
 
     QMenu* tableMenu;
+
+    QAction* editAction;
+    QAction* deleteAction;
+    QAction* appointmentsAction;
 
     int contextMenuSelectedIndex=-1;
 
