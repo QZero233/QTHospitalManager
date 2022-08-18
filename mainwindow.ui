@@ -38,6 +38,7 @@
     <property name="title">
      <string>文件</string>
     </property>
+    <addaction name="actionnewRecord"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
    </widget>
@@ -71,6 +72,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionnewRecord"/>
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
    <addaction name="separator"/>
@@ -142,6 +144,15 @@
    </property>
    <property name="text">
     <string>当日预约信息</string>
+   </property>
+  </action>
+  <action name="actionnewRecord">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/new.png</normaloff>:/icon/new.png</iconset>
+   </property>
+   <property name="text">
+    <string>新建</string>
    </property>
   </action>
  </widget>

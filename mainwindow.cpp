@@ -141,6 +141,9 @@ void MainWindow::on_actionOpen_triggered()
     QString filter = "文本文件(*.txt);;所有文件(*.*)";
     QString fileName = QFileDialog::getOpenFileName(this, dlgTitle, curPath, filter);
 
+    if(fileName.isEmpty())
+        return;
+
     //Init data source
     DataSource* dataSource=DataSource::getInstance();
     dataSource->setStorageFilePath(fileName.toStdString());
@@ -175,6 +178,8 @@ void MainWindow::on_actionOpen_triggered()
         ui->dataTable->setModel(model);
 
         ui->actionOpen->setVisible(false);
+        ui->actionnewRecord->setVisible(false);
+
         ui->actionSave->setVisible(true);
         ui->actionAdd->setVisible(true);
         ui->actionSearchByTel->setVisible(true);
@@ -299,4 +304,35 @@ void MainWindow::on_actiongetTodayAppointments_triggered()
     dialog.exec();
     model->reloadFromDataSource();
     saved=false;
+}
+
+void MainWindow::on_actionnewRecord_triggered()
+{
+    //Select file
+    QString curPath = QDir::currentPath();
+    QString dlgTitle = "选择一个文件";
+    QString filter = "文本文件(*.txt);;所有文件(*.*)";
+    QString fileName = QFileDialog::getSaveFileName(this, dlgTitle, curPath, filter);
+
+    if(fileName.isEmpty())
+        return;
+
+    //Init data source
+    DataSource* dataSource=DataSource::getInstance();
+    dataSource->setStorageFilePath(fileName.toStdString());
+
+    model=new DepartmentModel(departmentService.getAllDepartments());
+    ui->dataTable->setModel(model);
+
+    ui->actionOpen->setVisible(false);
+    ui->actionnewRecord->setVisible(false);
+
+    ui->actionSave->setVisible(true);
+    ui->actionAdd->setVisible(true);
+    ui->actionSearchByTel->setVisible(true);
+    ui->actionSelectDepartment->setVisible(true);
+    ui->actiongetTodayAppointments->setVisible(true);
+
+    ui->dataTable->setColumnWidth(4,100);
+    ui->dataTable->setColumnWidth(5,100);
 }

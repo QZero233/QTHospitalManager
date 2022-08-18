@@ -46,6 +46,8 @@ private slots:
 
     void on_actiongetTodayAppointments_triggered();
 
+    void on_actionnewRecord_triggered();
+
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
 
