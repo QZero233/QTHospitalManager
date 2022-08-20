@@ -4,6 +4,7 @@
 
 #include "DepartmentDao.h"
 #include "AppointmentDao.h"
+#include "DutyDao.h"
 #include <vector>
 
 using namespace std;
@@ -12,6 +13,7 @@ class DepartmentService {
 private:
     DepartmentDao dao;
     AppointmentDao appointmentDao;
+    DutyDao dutyDao;
 
 public:
 	DepartmentService();
@@ -24,6 +26,7 @@ public:
 	Department getDepartment(int id);
 
     int getAppointmentCountById(int departmentId);
+    int getCapacityById(int departmentId);
 
     vector<Department> getAllDepartments();
 };

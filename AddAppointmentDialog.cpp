@@ -1,9 +1,11 @@
 #include "AddAppointmentDialog.h"
 #include "ui_AddAppointmentDialog.h"
 
-#include <QIntValidator>
+#include "DepartmentService.h"
+#include "DoctorService.h"
+#include "AppointmentService.h"
 
-AddAppointmentDialog::AddAppointmentDialog(int departmentId,QWidget *parent) :
+AddAppointmentDialog::AddAppointmentDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddAppointmentDialog)
 {
@@ -11,56 +13,48 @@ AddAppointmentDialog::AddAppointmentDialog(int departmentId,QWidget *parent) :
 
     ui->comboBox_gender->addItem("男");
     ui->comboBox_gender->addItem("女");
-
-    ui->lineEdit_id->setValidator(new QIntValidator);
-
-    Department department=DepartmentService().getDepartment(departmentId);
-    QTime start=QTime::fromMSecsSinceStartOfDay(department.getAppointmentStartTime());
-    QTime end=QTime::fromMSecsSinceStartOfDay(department.getAppointmentEndTime());
-
-
-    QDateTime time=QDateTime::currentDateTime();
-    time.setTime(start);
-    ui->dateTimeEdit_time->setDateTime(time);
-    ui->dateTimeEdit_time->setMinimumDate(QDate::currentDate());
-    ui->dateTimeEdit_time->setTimeRange(start,end);
-
-    currentStored.setDepartmentId(departmentId);
 }
+
+
 
 AddAppointmentDialog::~AddAppointmentDialog()
 {
     delete ui;
 }
 
-void AddAppointmentDialog::on_pushButton_clicked()
-{
-    vector<Appointment> appointments=service.getAllAppointments();
-    int biggestId=0;
-    for(Appointment appointment:appointments){
-        if(appointment.getId()>biggestId)
-            biggestId=appointment.getId();
+void AddAppointmentDialog::setDuty(Duty duty){
+    Department department=DepartmentService().getDepartment(duty.getDepartmentId());
+    Doctor doctor=DoctorService().getDoctor(duty.getDoctorId());
+
+    string doctorPosition;
+    switch(doctor.getPosition()){
+    case Doctor::POSITION_PRACTICE:
+        doctorPosition="实习医师";
+        break;
+    case Doctor::POSITION_JUNIOR:
+        doctorPosition="高级医师";
+        break;
+    case Doctor::POSITION_SENIOR:
+        doctorPosition="领域专家";
+        break;
     }
 
-    int id=biggestId+1;
+    ui->label_depaerment->setText(("预约科室："+department.getName()).c_str());
+    ui->label_time->setText(("预约时间："+duty.formatDutyDateTime()).c_str());
+    ui->label_doctor->setText(("预约医生："+doctor.getName()+"("+doctorPosition+")").c_str());
 
-    ui->lineEdit_id->setText(QString::number(id));
+    dutyId=duty.getId();
 }
 
-void AddAppointmentDialog::accept(){
-    int id=ui->lineEdit_id->text().toInt();
-    string name=ui->lineEdit_name->text().toStdString();
-    int gender=(ui->comboBox_gender->currentIndex()==0)?Appointment::GENDER_MALE:Appointment::GENDER_FEMALE;
-    int age=ui->spinBox_age->value();
-    string tel=ui->lineEdit_tel->text().toStdString();
-    long time=ui->dateTimeEdit_time->dateTime().toSecsSinceEpoch();
-
-    currentStored.setId(id);
-    currentStored.setName(name);
-    currentStored.setGender(gender);
-    currentStored.setAge(age);
-    currentStored.setTelephone(tel);
-    currentStored.setAppointmentTime(time);
-
-    QDialog::accept();
+Appointment AddAppointmentDialog::getInputAppointment(){
+    AppointmentService service;
+    Appointment appointment;
+    appointment.setId(service.getUniqueId());
+    appointment.setName(ui->lineEdit_name->text().toStdString());
+    appointment.setTelephone(ui->lineEdit_tel->text().toStdString());
+    appointment.setAge(ui->spinBox_age->value());
+    appointment.setDutyId(dutyId);
+    appointment.setGender(ui->comboBox_gender->currentIndex()==0?
+                              Appointment::GENDER_MALE:Appointment::GENDER_FEMALE);
+    return appointment;
 }

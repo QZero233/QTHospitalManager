@@ -21,16 +21,15 @@ class ShowAppointmentsDialog : public QDialog
 
 public:
     explicit ShowAppointmentsDialog(const vector<Appointment>& appointments,QWidget *parent = nullptr);
-    explicit ShowAppointmentsDialog(int departmentId,QWidget *parent = nullptr);
     ~ShowAppointmentsDialog();
+
+    void setAllowDelete();
 
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
 
 private:
     Ui::ShowAppointmentsDialog *ui;
-
-    void initUI();
 
     void displayAppointments();
 
@@ -40,14 +39,12 @@ private:
 
     QMenu* tableMenu;
     QAction* deleteAction;
-    QAction* addAction;
+    int contextMenuSelectedIndex;
 
-    int contextMenuSelectedIndex=-1;
-    int departmentId=-1;
 private slots:
     void dataTable_customContextMenuRequested(QPoint pos);
+
     void dataTable_delete_triggered();
-    void dataTable_add_triggered();
 };
 
 #endif // SHOWAPPOINTMENTSDIALOG_H

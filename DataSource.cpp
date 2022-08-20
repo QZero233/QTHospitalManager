@@ -18,7 +18,7 @@ void DataSource::setStorageFilePath(const string& fileName) {
 }
 
 void DataSource::loadFromFile() {
-    fstream fs(storageFileName,ios::in);
+    //fstream fs(storageFileName,ios::in);
     //Departments first
     /*
      * int id;
@@ -32,7 +32,7 @@ void DataSource::loadFromFile() {
     */
     departments.clear();
     appointments.clear();
-    while(true){
+    /*while(true){
         int id;
         fs>>id;
         if(id==-1)
@@ -79,7 +79,7 @@ void DataSource::loadFromFile() {
         appointments.push_back(appointment);
     }
 
-    fs.close();
+    fs.close();*/
 }
 
 void DataSource::saveToFile() {
@@ -94,7 +94,7 @@ void DataSource::saveToFile() {
     string address;
     string telephone;
     */
-    fstream fs(storageFileName,ios::out);
+    /*fstream fs(storageFileName,ios::out);
     for(Department department:departments){
         fs<<department.getId()<<endl
          <<department.getName()<<endl
@@ -105,7 +105,7 @@ void DataSource::saveToFile() {
         <<department.getAddress()<<endl
         <<department.getTelephone()<<endl;
     }
-    fs<<-1<<endl;
+    fs<<-1<<endl;*/
 
     //Then appointments
     /*
@@ -117,7 +117,7 @@ void DataSource::saveToFile() {
     long appointmentTime;
     int departmentId;
     */
-    for(Appointment appointment:appointments){
+    /*for(Appointment appointment:appointments){
         fs<<appointment.getId()<<endl
          <<appointment.getName()<<endl
         <<appointment.getTelephone()<<endl
@@ -128,7 +128,7 @@ void DataSource::saveToFile() {
     }
     fs<<-1;
 
-    fs.close();
+    fs.close();*/
 }
 
 vector<Department>* DataSource::getDepartmentsPtr(){

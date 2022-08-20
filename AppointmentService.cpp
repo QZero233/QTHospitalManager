@@ -17,17 +17,6 @@ void AppointmentService::checkAppointmentData(const Appointment& appointment) th
     if (appointment.getAge() <= 0) {
         throw invalid_argument("Age must be greater than 0");
     }
-
-    if (appointment.getAppointmentTime() <= 0) {
-        throw invalid_argument("Time must be greater than 0");
-    }
-
-    //Check time suitability
-    Department department = departmentDao.getDepartment(appointment.getDepartmentId());
-    long time=QDateTime::fromSecsSinceEpoch(appointment.getAppointmentTime()).time().msecsSinceStartOfDay();
-    if(time<department.getAppointmentStartTime() || time>department.getAppointmentEndTime()){
-        throw invalid_argument("预约时间不在接诊时间范围内");
-    }
 }
 
 
@@ -39,11 +28,9 @@ throw(invalid_argument,runtime_error){
         throw invalid_argument("已经有ID为" + to_string(appointment.getId()) + "的预约信息存在");
 	}
 
-    //Check capacity
-    Department department = departmentDao.getDepartment(appointment.getDepartmentId());
-    int appointmentCount=dao.getCountByDepartmentId(appointment.getDepartmentId());
-    if (appointmentCount >= department.getCapacity()) {
-        throw runtime_error("预约数量超过容量");
+    //Check if the duty is reserved
+    if(dao.existByDutyId(appointment.getDutyId())){
+        throw runtime_error("无法添加预约，该时段该医生已被预约");
     }
 
     dao.addAppointment(appointment);
@@ -51,12 +38,6 @@ throw(invalid_argument,runtime_error){
 
 void AppointmentService::deleteAppointment(int appointmentId) {
     dao.deleteAppointment(appointmentId);
-}
-
-void AppointmentService::updateAppointment(const Appointment& appointment)
-throw(invalid_argument){
-    checkAppointmentData(appointment);
-    dao.updateAppointment(appointment);
 }
 
 Appointment AppointmentService::getAppointment(int appointmentId) {
@@ -67,14 +48,36 @@ vector<Appointment> AppointmentService::getAllAppointments(){
     return dao.getAllAppointments();
 }
 
-vector<Appointment> AppointmentService::getAllAppointmentsByDepartmentId(int departmentId){
-    return dao.getAllByDepartmentId(departmentId);
-}
-
-Department AppointmentService::getBelongingDepartment(const Appointment& appointment){
-    return departmentDao.getDepartment(appointment.getDepartmentId());
-}
-
 vector<Appointment> AppointmentService::getAllAppointmentsByTelephone(string telephone){
     return dao.getAllAppointmentsByTelephone(telephone);
+}
+
+vector<Appointment> AppointmentService::getAllAppointmentsByDepartmentId(int departmentId){
+    vector<Appointment> appointments=dao.getAllAppointments();
+    vector<Appointment> result;
+    for(int i=0;i<appointments.size();i++){
+        if(dutyDao.getDuty(appointments[i].getDutyId()).getDepartmentId()==departmentId){
+            result.push_back(appointments[i]);
+        }
+    }
+
+    return result;
+}
+
+bool AppointmentService::existByDutyId(int dutyId){
+   return dao.existByDutyId(dutyId);
+}
+
+vector<Appointment> AppointmentService::getAllAppointmentsByNameAndTelephone(string name,string telephone){
+    return dao.getAllAppointmentsByNameAndTelephone(name,telephone);
+}
+
+int AppointmentService::getUniqueId(){
+    int biggestId=0;
+    vector<Appointment> appointments=dao.getAllAppointments();
+    for(int i=0;i<appointments.size();i++){
+        if(appointments[i].getId()>biggestId)
+            biggestId=appointments[i].getId();
+    }
+    return biggestId+1;
 }

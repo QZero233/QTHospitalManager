@@ -14,31 +14,20 @@ class Department{
 private:
 	int id;
 	string name;
-	int idOfDutyDoctor;
-    long appointmentStartTime=-1;
-    long appointmentEndTime=-1;
-	int capacity;
 	string address;
 	string telephone;
 
 public:
 	Department() :
-	id(-1),name("empty"),idOfDutyDoctor(-1),appointmentStartTime(-1),appointmentEndTime(-1),
-	capacity(-1),address("empty"),telephone("empty") {
+    id(-1),name(""),address(""),telephone("") {
 
 	}
 
-	Department(int id,const string& name,int idOfDutyDoctor,long appointmentStartTime,
-		long appointmentEndTime, int capacity, string address, string telephone) {
-		setId(id);
-		setName(name);
-		setIdOfDutyDoctor(idOfDutyDoctor);
-		setAppointmentStartTime(appointmentStartTime);
-		setAppointmentEndTime(appointmentEndTime);
-		setCapacity(capacity);
-		setAddress(address);
-		setTelephone(telephone);
-	}
+    Department(int id,const string& name, string address, string telephone):
+    id(id),
+    name(name),
+    address(address),
+    telephone(telephone){}
 
 	void setId(int id) {
 		this->id = id;
@@ -54,38 +43,6 @@ public:
 
 	string getName() const {
 		return name;
-	}
-
-	void setIdOfDutyDoctor(int id) {
-		idOfDutyDoctor = id;
-	}
-
-	int getIdOfDutyDoctor() const {
-		return idOfDutyDoctor;
-	}
-
-    void setAppointmentStartTime(long time) {
-		appointmentStartTime = time;
-	}
-
-	long getAppointmentStartTime() const {
-		return appointmentStartTime;
-	}
-	
-	void setAppointmentEndTime(long time) {
-		appointmentEndTime = time;
-	}
-
-	long getAppointmentEndTime() const {
-		return appointmentEndTime;
-	}
-
-	void setCapacity(int capacity) {
-		this->capacity = capacity;
-	}
-
-	int getCapacity() const {
-		return capacity;
 	}
 
 	void setAddress(const string& address) {

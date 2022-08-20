@@ -18,10 +18,20 @@
 #include "departmenteditdialog.h"
 #include "ShowAppointmentsDialog.h"
 #include "InputTelDialog.h"
-#include "SelectDepartmentDialog.h"
+
+#include "DoctorService.h"
+#include "DutyService.h"
+
+#include "RegistrationWindow.h"
+
+#include "DepartmentDelegate.h"
+#include "DutyDelegate.h"
+
+#include "AddDoctorDialog.h"
 
 using namespace std;
 
+//TODO check dependent relationship when deleting
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -32,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
     //Set table not editable
-    ui->dataTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->dataTable->setItemDelegate(delegate);
 
     //Add right-click menu
     tableMenu=new QMenu(ui->dataTable);
@@ -40,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     deleteAction=new QAction("删除",ui->dataTable);
     appointmentsAction=new QAction("查看预约",ui->dataTable);
     tableMenu->addAction(editAction);
-    tableMenu->addAction(deleteAction);
+    //tableMenu->addAction(deleteAction);
     tableMenu->addAction(appointmentsAction);
     ui->dataTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->dataTable,SIGNAL(customContextMenuRequested(QPoint)),this,
@@ -49,13 +59,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(deleteAction,SIGNAL(triggered()),this,SLOT(dataTable_delete_triggered()));
     connect(appointmentsAction,SIGNAL(triggered()),this,SLOT(dataTable_appointments_triggered()));
 
+    //
+
     //Disable some menus before opening
     ui->actionSave->setVisible(false);
     ui->actionAdd->setVisible(false);
-    ui->actionSearchByTel->setVisible(false);
-    ui->actionSelectDepartment->setVisible(false);
-    ui->actionshowAll->setVisible(false);
-    ui->actiongetTodayAppointments->setVisible(false);
+    ui->actionRegistration->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -68,8 +77,10 @@ void MainWindow::dataTable_customContextMenuRequested(QPoint pos){
 
     if(index.isValid()){
         contextMenuSelectedIndex=index.row();
-        //contextMenuSelectedId=index.sibling(index.row(),0).data().toInt();
-        tableMenu->exec(QCursor::pos());
+
+        if(mode==MODE_DEPARTMENT){
+            tableMenu->exec(QCursor::pos());
+        }
     }
 }
 
@@ -127,67 +138,69 @@ void MainWindow::showEditDepartmentDialog(int id){
 }
 
 void MainWindow::showAppointmentsDialog(int id){
-    ShowAppointmentsDialog dialog(id);
+    ShowAppointmentsDialog dialog(AppointmentService().
+                                  getAllAppointmentsByDepartmentId(id));
     dialog.exec();
     model->reloadFromDataSource();
     saved=false;
 }
 
+void addTestData(){
+    //Add 5 departments
+    DepartmentService departmentService;
+    for(int i=1;i<=5;i++){
+        Department department(i,"科室"+to_string(i),"地址1"+to_string(i),"电话1"+to_string(i));
+        departmentService.addDepartment(department);
+    }
+
+    //Add 10 doctors
+    DoctorService doctorService;
+    for(int i=1;i<=10;i++){
+        int position=Doctor::POSITION_PRACTICE;
+        if(i%3==1)
+            position=Doctor::POSITION_SENIOR;
+        else if(i%3==2)
+            position=Doctor::POSITION_JUNIOR;
+
+        Doctor doctor(i,"医生"+to_string(i),position);
+        doctorService.addDoctor(doctor);
+    }
+
+    //Add 6 duties
+    DutyService dutyService;
+    long long today=QDate::currentDate().toJulianDay();
+    dutyService.addDuty(Duty(1,1,2,Duty::TIME_AM,today));
+    dutyService.addDuty(Duty(2,1,2,Duty::TIME_PM,today));
+    dutyService.addDuty(Duty(3,3,1,Duty::TIME_AM,today));
+    dutyService.addDuty(Duty(4,4,1,Duty::TIME_PM,today));
+    dutyService.addDuty(Duty(5,5,4,Duty::TIME_AM,today));
+    dutyService.addDuty(Duty(6,6,5,Duty::TIME_PM,today));
+
+    //Add 10 appointments
+    AppointmentService appointmentService;
+    appointmentService.addAppointment(Appointment(1,"预约1","电话1",0,18,2));
+    appointmentService.addAppointment(Appointment(2,"预约2","电话2",1,18,5));
+}
+
 void MainWindow::on_actionOpen_triggered()
 {
-    //Select file
-    QString curPath = QDir::currentPath();
-    QString dlgTitle = "选择一个文件";
-    QString filter = "文本文件(*.txt);;所有文件(*.*)";
-    QString fileName = QFileDialog::getOpenFileName(this, dlgTitle, curPath, filter);
-
-    if(fileName.isEmpty())
-        return;
-
     //Init data source
     DataSource* dataSource=DataSource::getInstance();
-    dataSource->setStorageFilePath(fileName.toStdString());
-    dataSource->loadFromFile();
+    dataSource->setStorageFilePath("record.txt");
+    //dataSource->loadFromFile();
+    addTestData();
 
+    model=new DepartmentModel(departmentService.getAllDepartments());
+    ui->dataTable->setModel(model);
 
-    //Generate test data
-    /*    Department department1(1,"发热科",996,0*60*60*1000,23*60*60*1000,10,"校医院","88888888");
-        Department department2(5,"呼吸科",888,10*60*60*1000,15*60*60*1000,5,"校医院","77777777");
-        Department department3(2,"检验科",666,7*60*60*1000,9*60*60*1000+48*60*1000,30,"校医院","66666666");
+    ui->actionOpen->setVisible(false);
 
-        departmentService.addDepartment(department1);
-        departmentService.addDepartment(department2);
-        departmentService.addDepartment(department3);
+    ui->actionSave->setVisible(true);
+    ui->actionAdd->setVisible(true);
+    ui->actionRegistration->setVisible(true);
 
-        //Test appointment add delete update query
-        AppointmentService appointmentService;
-        for (int i = 1; i <= 10; i++) {
-            Appointment appointment;
-            appointment.setId(i);
-            appointment.setName("张三"+to_string(i));
-            appointment.setTelephone("8848" + to_string(i));
-            appointment.setGender(Appointment::GENDER_MALE);
-            appointment.setAge(i);
-            appointment.setAppointmentTime(time(0));
-            appointment.setDepartmentId(1);
-
-            appointmentService.addAppointment(appointment);
-        }*/
-
-        model=new DepartmentModel(departmentService.getAllDepartments());
-        ui->dataTable->setModel(model);
-
-        ui->actionOpen->setVisible(false);
-        ui->actionnewRecord->setVisible(false);
-
-        ui->actionSave->setVisible(true);
-        ui->actionAdd->setVisible(true);
-        ui->actionSearchByTel->setVisible(true);
-        ui->actionSelectDepartment->setVisible(true);
-        ui->actiongetTodayAppointments->setVisible(true);
-
-        ui->dataTable->setColumnWidth(4,100);
-        ui->dataTable->setColumnWidth(5,100);
+    //ui->dataTable->setColumnWidth(4,120);
+    //ui->dataTable->setColumnWidth(5,100);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -201,11 +214,13 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::on_dataTable_doubleClicked(const QModelIndex &index)
 {
-    int id=index.sibling(index.row(),0).data().toInt();
-    if(index.column()==4){
-        showAppointmentsDialog(id);
-    }else{
-        showEditDepartmentDialog(id);
+    if(mode==MODE_DEPARTMENT){
+        int id=index.sibling(index.row(),0).data().toInt();
+        if(index.column()==4){
+            showAppointmentsDialog(id);
+        }else{
+            showEditDepartmentDialog(id);
+        }
     }
 }
 
@@ -217,7 +232,7 @@ void MainWindow::on_actionSave_triggered()
 }
 
 void MainWindow::closeEvent(QCloseEvent* event){
-    if(!saved){
+    /*if(!saved){
         int ret=QMessageBox::question(this,"是否关闭","数据更改后未保存，可能引发数据丢失");
         if(ret!=QMessageBox::Yes){
             event->ignore();
@@ -226,7 +241,9 @@ void MainWindow::closeEvent(QCloseEvent* event){
         }
     }else{
         event->accept();
-    }
+    }*/
+
+    //TODO remove the remarks to enable exit warning
 }
 
 void MainWindow::on_actionAdd_triggered()
@@ -241,8 +258,7 @@ void MainWindow::on_actionAdd_triggered()
     biggestId++;
 
 
-    Department preset(biggestId,"",0,QTime::currentTime().msecsSinceStartOfDay(),
-                     QTime::currentTime().msecsSinceStartOfDay(),1,"","" );
+    Department preset(biggestId,"","","" );
 
     DepartmentEditDIalog dialog;
     dialog.setIdEditable(true);
@@ -259,80 +275,65 @@ void MainWindow::on_actionAdd_triggered()
     }
 }
 
-void MainWindow::on_actionSearchByTel_triggered()
+void MainWindow::on_actionRegistration_triggered()
 {
-    InputTelDialog dialog;
-    if(dialog.exec()==QDialog::Accepted){
-        vector<Appointment> appointments=AppointmentService().
-                getAllAppointmentsByTelephone(dialog.getTel().toStdString());
-
-        ShowAppointmentsDialog dialog(appointments);
-        dialog.exec();
-        model->reloadFromDataSource();
-        saved=false;
-    }
+    RegistrationWindow* win=new RegistrationWindow(this);
+    win->show();
+    this->hide();
 }
 
-void MainWindow::on_actionshowAll_triggered()
+void MainWindow::on_actionduties_triggered()
 {
+    mode=MODE_DUTY;
+    vector<Duty> duties=DutyService().getAllDuties();
+
+    if(dutyModel==NULL){
+        dutyModel=new DutyModel(duties);
+    }else{
+        dutyModel->setDutiesAndReload(duties);
+    }
+
+    ui->dataTable->setModel(dutyModel);
+    ui->dataTable->setItemDelegate(dutyDelegate);
+
+    //TODO disable some menus
+}
+
+void MainWindow::on_actiondepartments_triggered()
+{
+    mode=MODE_DEPARTMENT;
+
     model->setDepartmentsAndReload(departmentService.getAllDepartments());
-    ui->actionshowAll->setVisible(false);
-}
-
-void MainWindow::on_actionSelectDepartment_triggered()
-{
-    SelectDepartmentDialog dialog;
-    if(dialog.exec()==QDialog::Accepted){
-        model->setDepartmentsAndReload(dialog.getSatisfiedDepartments());
-        ui->actionshowAll->setVisible(true);
-    }
-}
-
-void MainWindow::on_actiongetTodayAppointments_triggered()
-{
-    vector<Appointment> appointments=AppointmentService().getAllAppointments();
-    vector<Appointment> today;
-
-    QDate dateToday=QDate::currentDate();
-    for(Appointment appointment:appointments){
-        QDate appointmentDate=QDateTime::fromSecsSinceEpoch(appointment.getAppointmentTime()).date();
-        if(appointmentDate==dateToday)
-            today.push_back(appointment);
-    }
-
-    ShowAppointmentsDialog dialog(today);
-    dialog.exec();
-    model->reloadFromDataSource();
-    saved=false;
-}
-
-void MainWindow::on_actionnewRecord_triggered()
-{
-    //Select file
-    QString curPath = QDir::currentPath();
-    QString dlgTitle = "选择一个文件";
-    QString filter = "文本文件(*.txt);;所有文件(*.*)";
-    QString fileName = QFileDialog::getSaveFileName(this, dlgTitle, curPath, filter);
-
-    if(fileName.isEmpty())
-        return;
-
-    //Init data source
-    DataSource* dataSource=DataSource::getInstance();
-    dataSource->setStorageFilePath(fileName.toStdString());
-
-    model=new DepartmentModel(departmentService.getAllDepartments());
     ui->dataTable->setModel(model);
+    ui->dataTable->setItemDelegate(delegate);
 
-    ui->actionOpen->setVisible(false);
-    ui->actionnewRecord->setVisible(false);
+    //TODO disable some menus
+}
 
-    ui->actionSave->setVisible(true);
-    ui->actionAdd->setVisible(true);
-    ui->actionSearchByTel->setVisible(true);
-    ui->actionSelectDepartment->setVisible(true);
-    ui->actiongetTodayAppointments->setVisible(true);
+void MainWindow::on_actiondoctors_triggered()
+{
+    mode=MDOE_DOCTOR;
 
-    ui->dataTable->setColumnWidth(4,100);
-    ui->dataTable->setColumnWidth(5,100);
+    vector<Doctor> doctors=DoctorService().getAllDoctors();
+    if(doctorModel==NULL){
+        doctorModel=new DoctorModel(doctors);
+    }else{
+        doctorModel->setDoctorsAndReload(doctors);
+    }
+
+    ui->dataTable->setModel(doctorModel);
+    ui->dataTable->setItemDelegate(doctorDelegate);
+}
+
+void MainWindow::on_actionaddDoctor_triggered()
+{
+    AddDoctorDialog dialog;
+    if(dialog.exec()==QDialog::Accepted){
+        try {
+            Doctor doctor=dialog.getInputDoctor();
+            doctorModel->addDoctor(doctor);
+        }  catch (exception& e) {
+            QMessageBox::critical(this,"错误",e.what());
+        }
+    }
 }

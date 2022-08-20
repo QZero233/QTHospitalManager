@@ -9,6 +9,13 @@
 
 #include "DepartmentService.h"
 #include "DepartmentModel.h"
+#include "DepartmentDelegate.h"
+
+#include "DutyModel.h"
+#include "DutyDelegate.h"
+
+#include "DoctorModel.h"
+#include "DoctorDelegate.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -37,16 +44,15 @@ private slots:
     void on_actionSave_triggered();
 
     void on_actionAdd_triggered();
+    void on_actionRegistration_triggered();
 
-    void on_actionSearchByTel_triggered();
+    void on_actionduties_triggered();
 
-    void on_actionshowAll_triggered();
+    void on_actiondepartments_triggered();
 
-    void on_actionSelectDepartment_triggered();
+    void on_actiondoctors_triggered();
 
-    void on_actiongetTodayAppointments_triggered();
-
-    void on_actionnewRecord_triggered();
+    void on_actionaddDoctor_triggered();
 
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
@@ -57,6 +63,12 @@ private:
     Ui::MainWindow *ui;
 
     DepartmentModel* model;
+    DutyModel* dutyModel=NULL;
+    DoctorModel* doctorModel=NULL;
+
+    DepartmentDelegate* delegate=new DepartmentDelegate();
+    DutyDelegate* dutyDelegate=new DutyDelegate();
+    DoctorDelegate* doctorDelegate=new DoctorDelegate();
 
     DepartmentService departmentService;
 
@@ -73,5 +85,11 @@ private:
     void showAppointmentsDialog(int id);
 
     bool saved=true;
+
+    int mode=0;
+
+    static const int MODE_DEPARTMENT=0;
+    static const int MODE_DUTY=1;
+    static const int MDOE_DOCTOR=2;
 };
 #endif // MAINWINDOW_H

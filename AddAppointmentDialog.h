@@ -3,8 +3,8 @@
 
 #include <QDialog>
 
-#include "DepartmentService.h"
-#include "AppointmentService.h"
+#include "Duty.h"
+#include "Appointment.h"
 
 namespace Ui {
 class AddAppointmentDialog;
@@ -15,21 +15,16 @@ class AddAppointmentDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddAppointmentDialog(int departmentId,QWidget *parent = nullptr);
+    explicit AddAppointmentDialog(QWidget *parent = nullptr);
     ~AddAppointmentDialog();
 
-    Appointment getCurrentStored(){return currentStored;}
-private slots:
-    void on_pushButton_clicked();
+    void setDuty(Duty duty);
+    Appointment getInputAppointment();
 
 private:
     Ui::AddAppointmentDialog *ui;
 
-    AppointmentService service;
-
-    void accept() override;
-
-    Appointment currentStored;
+    int dutyId;
 };
 
 #endif // ADDAPPOINTMENTDIALOG_H

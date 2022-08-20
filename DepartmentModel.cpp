@@ -14,7 +14,13 @@ int DepartmentModel::rowCount(const QModelIndex &parent) const{
 }
 
 int DepartmentModel::columnCount(const QModelIndex &parent) const{
-    return 7;
+    //Id
+    //Name
+    //Address
+    //Tel
+    //Capacity
+    //Status
+    return 6;
 }
 
 QVariant DepartmentModel::data(const QModelIndex &index, int role) const{
@@ -24,33 +30,45 @@ QVariant DepartmentModel::data(const QModelIndex &index, int role) const{
 
     //Display role: give rendered data
     //Edit role: give raw data
-    if(role!=Qt::DisplayRole)
+    if(role!=Qt::DisplayRole && role!=Qt::EditRole)
         return QVariant();
 
     int row=index.row();
     int column=index.column();
 
     Department department=departments.at(row);
+
+    DepartmentService service;
+    int capacity=service.getCapacityById(department.getId());
+    int appointmentCount=service.getAppointmentCountById(department.getId());
+
     switch(column){
     case 0:
         return department.getId();
     case 1:
         return department.getName().c_str();
     case 2:
-        return department.getIdOfDutyDoctor();
-    case 3:
-        return QString("%1-%2").arg(
-                    TimeUtils::formatTimeFromStartOfDayByQT(department.getAppointmentStartTime()),
-                    TimeUtils::formatTimeFromStartOfDayByQT(department.getAppointmentEndTime()));
-    case 4:
-        return QString("%1/%2").arg(QString::
-                                    number(DepartmentService().getAppointmentCountById(
-                                               department.getId()))
-                                    ,QString::number(department.getCapacity()));
-    case 5:
         return department.getAddress().c_str();
-    case 6:
+    case 3:
         return department.getTelephone().c_str();
+    case 4:
+    {
+        return (to_string(appointmentCount)+"/"+to_string(capacity)).c_str();
+    }
+    case 5:
+    {
+        bool full=(capacity-appointmentCount<=0);
+        if(role==Qt::DisplayRole){
+            if(full)
+                return "已满";
+            else
+                return ("剩余 "+to_string(capacity-appointmentCount)+" 个名额").c_str();
+        }else{
+            return full;
+        }
+    }
+    default:
+        return QVariant();
     }
 }
 
@@ -62,15 +80,13 @@ QVariant DepartmentModel::headerData(int section, Qt::Orientation orientation, i
         case 1:
             return "门诊名称";
         case 2:
-            return "值班医生工号";
+            return "门诊地址";
         case 3:
-            return "每日接诊时间";
+            return "联系电话";
         case 4:
             return "当前预约数/总容量";
         case 5:
-            return "门诊地址";
-        case 6:
-            return "联系电话";
+            return "状态";
         }
     }
 

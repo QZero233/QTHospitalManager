@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>321</height>
+    <height>200</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>280</y>
+     <x>20</x>
+     <y>160</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -75,116 +75,11 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>70</y>
-     <width>81</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>值班医生工号</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_id_doctor">
-   <property name="geometry">
-    <rect>
-     <x>110</x>
-     <y>70</y>
-     <width>113</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>100</y>
-     <width>54</width>
-     <height>12</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>接诊时间</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_5">
-   <property name="geometry">
-    <rect>
-     <x>110</x>
-     <y>100</y>
-     <width>51</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>每日开始</string>
-   </property>
-  </widget>
-  <widget class="QTimeEdit" name="timeEdit_start">
-   <property name="geometry">
-    <rect>
-     <x>170</x>
-     <y>100</y>
-     <width>118</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_6">
-   <property name="geometry">
-    <rect>
-     <x>110</x>
-     <y>130</y>
-     <width>54</width>
-     <height>12</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>每日结束</string>
-   </property>
-  </widget>
-  <widget class="QTimeEdit" name="timeEdit_end">
-   <property name="geometry">
-    <rect>
-     <x>170</x>
-     <y>130</y>
-     <width>118</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_7">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>160</y>
-     <width>54</width>
-     <height>12</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>总容量</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit_capacity">
-   <property name="geometry">
-    <rect>
-     <x>110</x>
-     <y>160</y>
-     <width>113</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>230</y>
+     <y>120</y>
      <width>54</width>
      <height>12</height>
     </rect>
@@ -197,7 +92,7 @@
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>190</y>
+     <y>80</y>
      <width>113</width>
      <height>20</height>
     </rect>
@@ -207,7 +102,7 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>190</y>
+     <y>80</y>
      <width>54</width>
      <height>12</height>
     </rect>
@@ -220,7 +115,7 @@
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>230</y>
+     <y>120</y>
      <width>271</width>
      <height>20</height>
     </rect>

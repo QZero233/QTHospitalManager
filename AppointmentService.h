@@ -5,6 +5,7 @@
 
 #include "AppointmentDao.h"
 #include "DepartmentDao.h"
+#include "DutyDao.h"
 #include <vector>
 
 using namespace std;
@@ -13,7 +14,7 @@ class AppointmentService{
 private:
     AppointmentDao dao;
     DepartmentDao departmentDao;
-
+    DutyDao dutyDao;
 
 public:
 	AppointmentService();
@@ -22,14 +23,17 @@ public:
 
     void addAppointment(const Appointment& appointment) throw(invalid_argument,runtime_error);
     void deleteAppointment(int appointmentId);
-    void updateAppointment(const Appointment& appointment) throw(invalid_argument);
     Appointment getAppointment(int appointmentId);
+
+    bool existByDutyId(int dutyId);
 
     vector<Appointment> getAllAppointmentsByDepartmentId(int departmentId);
     vector<Appointment> getAllAppointmentsByTelephone(string telephone);
     vector<Appointment> getAllAppointments();
 
-    Department getBelongingDepartment(const Appointment& appointment);
+    vector<Appointment> getAllAppointmentsByNameAndTelephone(string name,string telephone);
+
+    int getUniqueId();
 };
 
 #endif

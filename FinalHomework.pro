@@ -10,18 +10,35 @@ CONFIG += c++11
 
 SOURCES += \
     AddAppointmentDialog.cpp \
+    AddDoctorDialog.cpp \
+    AddDutyDialog.cpp \
     AppointmentDao.cpp \
     AppointmentEditDelegate.cpp \
     AppointmentModel.cpp \
     AppointmentService.cpp \
     DataSource.cpp \
     DepartmentDao.cpp \
+    DepartmentDelegate.cpp \
     DepartmentModel.cpp \
     DepartmentService.cpp \
+    Doctor.cpp \
+    DoctorDao.cpp \
+    DoctorDelegate.cpp \
+    DoctorModel.cpp \
+    DoctorService.cpp \
+    Duty.cpp \
+    DutyDao.cpp \
+    DutyDelegate.cpp \
+    DutyModel.cpp \
+    DutyService.cpp \
+    InputPasswordDialog.cpp \
     InputTelDialog.cpp \
+    QueryAppointmentDialog.cpp \
     ReadOnlyDelegate.cpp \
-    SelectDepartmentDialog.cpp \
+    RegistrationWindow.cpp \
+    SelectDutyDialog.cpp \
     ShowAppointmentsDialog.cpp \
+    ShowDepartmentDutiesDialog.cpp \
     TimeUtils.cpp \
     departmenteditdialog.cpp \
     main.cpp \
@@ -29,6 +46,8 @@ SOURCES += \
 
 HEADERS += \
     AddAppointmentDialog.h \
+    AddDoctorDialog.h \
+    AddDutyDialog.h \
     Appointment.h \
     AppointmentDao.h \
     AppointmentEditDelegate.h \
@@ -37,22 +56,42 @@ HEADERS += \
     DataSource.h \
     Department.h \
     DepartmentDao.h \
+    DepartmentDelegate.h \
     DepartmentModel.h \
     DepartmentService.h \
+    Doctor.h \
+    DoctorDao.h \
+    DoctorDelegate.h \
+    DoctorModel.h \
+    DoctorService.h \
+    Duty.h \
+    DutyDao.h \
+    DutyDelegate.h \
+    DutyModel.h \
+    DutyService.h \
+    InputPasswordDialog.h \
     InputTelDialog.h \
+    QueryAppointmentDialog.h \
     ReadOnlyDelegate.h \
-    SelectDepartmentDialog.h \
+    RegistrationWindow.h \
+    SelectDutyDialog.h \
     ShowAppointmentsDialog.h \
-    StorageUtils.h \
+    ShowDepartmentDutiesDialog.h \
     TimeUtils.h \
     departmenteditdialog.h \
     mainwindow.h
 
 FORMS += \
     AddAppointmentDialog.ui \
+    AddDoctorDialog.ui \
+    AddDutyDialog.ui \
+    InputPasswordDialog.ui \
     InputTelDialog.ui \
-    SelectDepartmentDialog.ui \
+    QueryAppointmentDialog.ui \
+    RegistrationWindow.ui \
+    SelectDutyDialog.ui \
     ShowAppointmentsDialog.ui \
+    ShowDepartmentDutiesDialog.ui \
     departmenteditdialog.ui \
     mainwindow.ui
 

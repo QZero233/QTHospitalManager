@@ -4,6 +4,8 @@
 #define DATA_SOURCE_H
 
 #include "Department.h"
+#include "Doctor.h"
+#include "Duty.h"
 #include <vector>
 
 using namespace std;
@@ -13,6 +15,8 @@ class DataSource
 private:
 	vector<Department> departments;
     vector<Appointment> appointments;
+    vector<Doctor> doctors;
+    vector<Duty> duties;
 
 	string storageFileName;
 
@@ -30,6 +34,14 @@ public:
     vector<Department>* getDepartmentsPtr();
 
     vector<Appointment>* getAppointmentsPtr();
+
+    vector<Doctor>* getDoctorsPtr(){
+        return &doctors;
+    }
+
+    vector<Duty>* getDutiesPtr(){
+        return &duties;
+    }
 };
 
 

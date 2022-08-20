@@ -5,6 +5,7 @@
 
 #include "AppointmentService.h"
 
+
 class AppointmentModel : public QAbstractTableModel
 {
 public:
@@ -15,8 +16,6 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     void addAppointment(const Appointment& appointment);
     void deleteAppoinment(int index);
@@ -25,8 +24,6 @@ public:
     Appointment getAppointmentByIndex(int index);
 private:
     vector<Appointment> appointments;
-    int departmentId;
-    bool singleDepartmentMode;
 
     AppointmentService service;
 };

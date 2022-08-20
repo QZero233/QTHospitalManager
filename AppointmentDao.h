@@ -16,11 +16,13 @@ public:
     void deleteAppointment(int id);
     void updateAppointment(const Appointment& appointment);
     Appointment getAppointment(int id);
+
     vector<Appointment> getAllAppointments();
     vector<Appointment> getAllAppointmentsByTelephone(string telephone);
 
-    vector<Appointment> getAllByDepartmentId(int departmentId);
-    int getCountByDepartmentId(int departmentId);
+    vector<Appointment> getAllAppointmentsByNameAndTelephone(string name,string telephone);
+
+    bool existByDutyId(int dutyId);
 
 private:
     vector<Appointment>* appointmentsPtr;
