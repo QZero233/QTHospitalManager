@@ -51,7 +51,7 @@ QVariant DutyModel::data(const QModelIndex &index, int role) const{
 
     Duty duty=duties.at(row);
     Doctor doctor=DoctorService().getDoctor(duty.getDoctorId());
-    Department department=DepartmentService().getDepartment(duty.getDepartmentId());
+    Department department=DepartmentService().getDepartment(doctor.getDepartmentId());
     bool occupied=AppointmentService().existByDutyId(duty.getId());
     switch(column){
     case 0:

@@ -3,6 +3,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 
+
 QWidget* DoctorDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const{
     if(!index.isValid())
         return NULL;
@@ -17,6 +18,12 @@ QWidget* DoctorDelegate::createEditor(QWidget *parent, const QStyleOptionViewIte
         box->addItem("领域专家");
         box->addItem("高级医师");
         box->addItem("实习医师");
+        return box;
+    }
+    case 3:
+    {
+        QComboBox* box=new QComboBox(parent);
+        box->addItems(departmentNames);
         return box;
     }
     }
@@ -35,6 +42,10 @@ void DoctorDelegate::setEditorData(QWidget *editor, const QModelIndex &index) co
         //Position
         QComboBox* edit=(QComboBox*)editor;
         edit->setCurrentIndex(data.toInt());
+    }else if(index.column()==3){
+        //Department
+        QComboBox* edit=(QComboBox*)editor;
+        edit->setCurrentIndex(idToIndexMap.value(data.toInt()));
     }
 }
 
@@ -50,5 +61,8 @@ void DoctorDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, co
         //Position
         QComboBox* edit=(QComboBox*)editor;
         model->setData(index,edit->currentIndex());
+    }else if(index.column()==3){
+        QComboBox* edit=(QComboBox*)editor;
+        model->setData(index,indexToIdMap.value(edit->currentIndex()));
     }
 }

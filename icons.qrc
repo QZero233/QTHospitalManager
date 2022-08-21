@@ -4,5 +4,12 @@
         <file>imgs/open.png</file>
         <file>imgs/add.png</file>
         <file>imgs/registration.png</file>
+        <file>imgs/department.png</file>
+        <file>imgs/doctor.png</file>
+        <file>imgs/duty.png</file>
+        <file>imgs/exit.png</file>
+        <file>imgs/query.png</file>
+        <file>imgs/show_all.png</file>
+        <file>imgs/select.png</file>
     </qresource>
 </RCC>

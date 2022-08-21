@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>挂号窗口</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTableView" name="dataTable">
@@ -47,12 +47,17 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionSelect"/>
+   <addaction name="actionShowAll"/>
    <addaction name="separator"/>
    <addaction name="actionQueryAppointment"/>
    <addaction name="separator"/>
    <addaction name="actionExit"/>
   </widget>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/imgs/exit.png</normaloff>:/icon/imgs/exit.png</iconset>
+   </property>
    <property name="text">
     <string>退出</string>
    </property>
@@ -61,6 +66,10 @@
    </property>
   </action>
   <action name="actionSelect">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/imgs/select.png</normaloff>:/icon/imgs/select.png</iconset>
+   </property>
    <property name="text">
     <string>筛选</string>
    </property>
@@ -69,6 +78,10 @@
    </property>
   </action>
   <action name="actionQueryAppointment">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/imgs/query.png</normaloff>:/icon/imgs/query.png</iconset>
+   </property>
    <property name="text">
     <string>查询预约</string>
    </property>
@@ -76,7 +89,27 @@
     <string>查询预约</string>
    </property>
   </action>
+  <action name="actionShowAll">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/imgs/show_all.png</normaloff>:/icon/imgs/show_all.png</iconset>
+   </property>
+   <property name="text">
+    <string>显示全部</string>
+   </property>
+   <property name="toolTip">
+    <string>显示全部</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

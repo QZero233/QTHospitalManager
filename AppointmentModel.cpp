@@ -3,6 +3,7 @@
 #include "TimeUtils.h"
 #include "DepartmentService.h"
 #include "DutyService.h"
+#include "DoctorService.h"
 
 AppointmentModel::AppointmentModel(vector<Appointment> appointments,QObject *parent):
 QAbstractTableModel(parent),
@@ -22,7 +23,8 @@ int AppointmentModel::columnCount(const QModelIndex &parent) const{
     //Tel
     //Time
     //Department
-    return 7;
+    //Doctor
+    return 8;
 }
 
 QVariant AppointmentModel::data(const QModelIndex &index, int role) const{
@@ -39,7 +41,8 @@ QVariant AppointmentModel::data(const QModelIndex &index, int role) const{
 
     Appointment appointment=appointments.at(row);
     Duty duty=dutyService.getDuty(appointment.getDutyId());
-    Department department=DepartmentService().getDepartment(duty.getDepartmentId());
+    Doctor doctor=DoctorService().getDoctor(duty.getDoctorId());
+    Department department=DepartmentService().getDepartment(doctor.getDepartmentId());
     switch(column){
     case 0:
         return QVariant(appointment.getId());
@@ -55,6 +58,8 @@ QVariant AppointmentModel::data(const QModelIndex &index, int role) const{
         return QVariant(appointment.getTelephone().c_str());
     case 6:
         return department.getName().c_str();
+    case 7:
+        return doctor.getName().c_str();
     }
 }
 
@@ -75,6 +80,8 @@ QVariant AppointmentModel::headerData(int section, Qt::Orientation orientation, 
             return "电话";
         case 6:
             return "门诊部门";
+        case 7:
+            return "医生";
         }
     }
 

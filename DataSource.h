@@ -18,6 +18,8 @@ private:
     vector<Doctor> doctors;
     vector<Duty> duties;
 
+    string password="123456";
+
 	string storageFileName;
 
 	static DataSource* instance;
@@ -41,6 +43,14 @@ public:
 
     vector<Duty>* getDutiesPtr(){
         return &duties;
+    }
+
+    string getPassword(){
+        return password;
+    }
+
+    void setPassword(string password){
+        this->password=password;
     }
 };
 

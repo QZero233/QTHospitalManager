@@ -54,6 +54,8 @@ private slots:
 
     void on_actionaddDoctor_triggered();
 
+    void on_actionaddDuty_triggered();
+
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
 
@@ -73,7 +75,6 @@ private:
     DepartmentService departmentService;
 
     QMenu* tableMenu;
-
     QAction* editAction;
     QAction* deleteAction;
     QAction* appointmentsAction;
@@ -84,9 +85,9 @@ private:
 
     void showAppointmentsDialog(int id);
 
-    bool saved=true;
-
     int mode=0;
+
+    void controlMenuVisibilityByMode();
 
     static const int MODE_DEPARTMENT=0;
     static const int MODE_DUTY=1;

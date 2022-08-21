@@ -19,10 +19,6 @@ public:
     void updateDuty(const Duty& duty);
     Duty getDuty(int id);
     vector<Duty> getAllDuties();
-
-    int getCountByDepartmentId(int departmentId);
-
-    vector<Duty> getAllByDepartmentId(int departmentId);
 private:
     vector<Duty>* dutiesPtr;
 };

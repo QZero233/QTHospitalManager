@@ -10,12 +10,17 @@ DutyService::DutyService() {
 }
 
 void DutyService::checkDutyDataMembers(const Duty& duty) throw(invalid_argument){
-    if(!departmentDao.existById(duty.getDepartmentId()))
-        throw invalid_argument("不存在ID为 "+to_string(duty.getDepartmentId())+" 的门诊部门");
     if(!doctorDao.existById(duty.getDoctorId()))
         throw invalid_argument("不存在ID为 "+to_string(duty.getDoctorId())+" 的医生");
 
-    //TODO check if the doctor is busy(has another duty) at that time
+    vector<Duty> duties=dao.getAllDuties();
+    for(Duty data:duties){
+        if(data.getDoctorId()!=duty.getDoctorId())
+            continue;
+
+        if(data.getDutyDate()==duty.getDutyDate() && data.getDutyTime()==duty.getDutyTime())
+            throw invalid_argument("该医生在该时段存在预约，无法添加");
+    }
 }
 
 void DutyService::addDuty(const Duty& duty) throw(invalid_argument) {
@@ -24,7 +29,12 @@ void DutyService::addDuty(const Duty& duty) throw(invalid_argument) {
 }
 
 void DutyService::deleteDuty(int id) throw(runtime_error) {
-    //TODO check dependent relationship
+    //Check appointment
+    vector<Appointment> appointments=appointmentDao.getAllAppointments();
+    for(Appointment appointment:appointments){
+        if(appointment.getDutyId()==id)
+            throw runtime_error("该排班已被预约，无法删除，请先删除预约记录");
+    }
     dao.deleteDuty(id);
 }
 
@@ -42,7 +52,28 @@ vector<Duty> DutyService::getAllDuties(){
 }
 
 vector<Duty> DutyService::getAllByDepartmentId(int departmentId){
-    return dao.getAllByDepartmentId(departmentId);
+    vector<Duty> result;
+    vector<Duty> duties=dao.getAllDuties();
+
+    for(Duty duty:duties){
+        Doctor doctor=doctorDao.getDoctor(duty.getDoctorId());
+        if(doctor.getDepartmentId()==departmentId)
+            result.push_back(duty);
+    }
+
+    return result;
+}
+
+int DutyService::getUniqueId(){
+    int id=0;
+    vector<Duty> duties=dao.getAllDuties();
+
+    for(Duty duty:duties){
+        if(duty.getId()>id)
+            id=duty.getId();
+    }
+
+    return id+1;
 }
 
 

@@ -52,24 +52,3 @@ vector<Duty> DutyDao::getAllDuties(){
     return *dutiesPtr;
 }
 
-int DutyDao::getCountByDepartmentId(int departmentId){
-    int result=0;
-    for(Duty duty:(*dutiesPtr)){
-        if(duty.getDepartmentId()==departmentId)
-            result++;
-    }
-
-    return result;
-}
-
-vector<Duty> DutyDao::getAllByDepartmentId(int departmentId){
-    vector<Duty> result;
-
-    for(int i=0;i<dutiesPtr->size();i++){
-        if(dutiesPtr->at(i).getDepartmentId()==departmentId)
-            result.push_back(dutiesPtr->at(i));
-    }
-
-    return result;
-}
-

@@ -23,8 +23,8 @@ AddAppointmentDialog::~AddAppointmentDialog()
 }
 
 void AddAppointmentDialog::setDuty(Duty duty){
-    Department department=DepartmentService().getDepartment(duty.getDepartmentId());
     Doctor doctor=DoctorService().getDoctor(duty.getDoctorId());
+    Department department=DepartmentService().getDepartment(doctor.getDepartmentId());
 
     string doctorPosition;
     switch(doctor.getPosition()){

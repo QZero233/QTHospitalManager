@@ -56,7 +56,9 @@ vector<Appointment> AppointmentService::getAllAppointmentsByDepartmentId(int dep
     vector<Appointment> appointments=dao.getAllAppointments();
     vector<Appointment> result;
     for(int i=0;i<appointments.size();i++){
-        if(dutyDao.getDuty(appointments[i].getDutyId()).getDepartmentId()==departmentId){
+        int doctorId=dutyDao.getDuty(appointments[i].getDutyId()).getDoctorId();
+        Doctor doctor=doctorDao.getDoctor(doctorId);
+        if(doctor.getDepartmentId()==departmentId){
             result.push_back(appointments[i]);
         }
     }

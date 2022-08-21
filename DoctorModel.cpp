@@ -2,6 +2,8 @@
 
 #include "TimeUtils.h"
 
+#include "DepartmentService.h"
+
 DoctorModel::DoctorModel(vector<Doctor> doctors,QObject *parent):
 QAbstractTableModel(parent),
 doctors(doctors)
@@ -17,7 +19,8 @@ int DoctorModel::columnCount(const QModelIndex &parent) const{
     //Id
     //Name
     //Position
-    return 3;
+    //Department
+    return 4;
 }
 
 QVariant DoctorModel::data(const QModelIndex &index, int role) const{
@@ -29,11 +32,6 @@ QVariant DoctorModel::data(const QModelIndex &index, int role) const{
     //Edit role: give raw data
     if(role!=Qt::DisplayRole && role!=Qt::EditRole)
         return QVariant();
-
-    if(index.column()==2 && index.row()==5){
-        int i=0;
-        i++;
-    }
 
     int row=index.row();
     int column=index.column();
@@ -66,6 +64,13 @@ QVariant DoctorModel::data(const QModelIndex &index, int role) const{
         }
         return doctorPosition.c_str();
     }
+    case 3:
+    {
+        if(role==Qt::EditRole)
+            return doctor.getDepartmentId();
+        Department department=DepartmentService().getDepartment(doctor.getDepartmentId());
+        return department.getName().c_str();
+    }
     default:
         return QVariant();
     }
@@ -80,6 +85,8 @@ QVariant DoctorModel::headerData(int section, Qt::Orientation orientation, int r
             return "医生姓名";
         case 2:
             return "医生职位";
+        case 3:
+            return "所属科室";
         }
     }
 
@@ -152,6 +159,8 @@ bool DoctorModel::setData(const QModelIndex &index, const QVariant &value, int r
        doctor.setName(value.toString().toStdString());
     }else if(index.column()==2){
         doctor.setPosition(value.toInt());
+    }else if(index.column()==3){
+        doctor.setDepartmentId(value.toInt());
     }
     service.updateDoctor(doctor);
     doctors[index.row()]=doctor;

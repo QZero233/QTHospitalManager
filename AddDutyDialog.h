@@ -3,6 +3,10 @@
 
 #include <QDialog>
 
+#include "DoctorService.h"
+
+#include "Duty.h"
+
 namespace Ui {
 class AddDutyDialog;
 }
@@ -15,8 +19,10 @@ public:
     explicit AddDutyDialog(QWidget *parent = nullptr);
     ~AddDutyDialog();
 
+    Duty getInputDuty();
 private:
     Ui::AddDutyDialog *ui;
+    vector<Doctor> doctors;
 };
 
 #endif // ADDDUTYDIALOG_H

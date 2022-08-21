@@ -29,7 +29,7 @@ ShowAppointmentsDialog::ShowAppointmentsDialog(const vector<Appointment>& appoin
 void ShowAppointmentsDialog::setAllowDelete(){
     //Add context menu
     tableMenu=new QMenu(ui->dataTable);
-    deleteAction=new QAction("删除",ui->dataTable);
+    deleteAction=new QAction("取消预约",ui->dataTable);
     tableMenu->addAction(deleteAction);
 
     ui->dataTable->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -40,8 +40,15 @@ void ShowAppointmentsDialog::setAllowDelete(){
 }
 
 void ShowAppointmentsDialog::dataTable_delete_triggered(){
-    //TODO show confirm dialog
-    model->deleteAppoinment(contextMenuSelectedIndex);
+    QMessageBox box;
+    box.setText("是否取消预约");
+    box.setInformativeText("此操作不可逆！");
+    box.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
+    box.setDefaultButton(QMessageBox::Ok);
+    int ret=box.exec();
+    if(ret==QMessageBox::Ok){
+        model->deleteAppoinment(contextMenuSelectedIndex);
+    }
 }
 
 void ShowAppointmentsDialog::dataTable_customContextMenuRequested(QPoint pos){

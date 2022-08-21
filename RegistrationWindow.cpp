@@ -13,6 +13,8 @@
 #include "QueryAppointmentDialog.h"
 #include "ShowAppointmentsDialog.h"
 
+#include "SelectDutyDialog.h"
+
 RegistrationWindow::RegistrationWindow(MainWindow* win,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::RegistrationWindow),
@@ -20,7 +22,8 @@ RegistrationWindow::RegistrationWindow(MainWindow* win,QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //TODO fill table with departments
+    ui->toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
     DepartmentService service;
     model=new DepartmentModel(service.getAllDepartments());
 
@@ -52,8 +55,7 @@ void RegistrationWindow::on_actionExit_triggered()
     InputPasswordDialog dialog;
     if(dialog.exec()==QDialog::Accepted){
         QString pwd=dialog.getPwd();
-        //TODO let admin set password
-        if(pwd=="1"){
+        if(pwd==DataSource::getInstance()->getPassword().c_str()){
             //Exit
             win->show();
             delete this;
@@ -65,7 +67,11 @@ void RegistrationWindow::on_actionExit_triggered()
 
 void RegistrationWindow::on_actionSelect_triggered()
 {
-
+    SelectDutyDialog dialog;
+    if(dialog.exec()==QDialog::Accepted){
+        ShowDepartmentDutiesDialog d(dialog.getSatsfitedDuties());
+        d.exec();
+    }
 }
 
 void RegistrationWindow::on_dataTable_doubleClicked(const QModelIndex &index)

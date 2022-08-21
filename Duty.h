@@ -15,14 +15,12 @@ public:
     Duty():
         id(-1),
         doctorId(-1),
-        departmentId(-1),
         dutyTime(-1),
         dutyDate(-1){}
 
-    Duty(int id,int doctorId,int departmentId,int dutyTime,long long dutyDate):
+    Duty(int id,int doctorId,int dutyTime,long long dutyDate):
         id(id),
         doctorId(doctorId),
-        departmentId(departmentId),
         dutyTime(dutyTime),
         dutyDate(dutyDate){}
 
@@ -40,14 +38,6 @@ public:
 
     int getDoctorId() const{
         return doctorId;
-    }
-
-    void setDepartmentId(int departmentId){
-        this->departmentId=departmentId;
-    }
-
-    int getDepartmentId() const{
-        return departmentId;
     }
 
     void setDutyTime(int dutyTime){
@@ -85,7 +75,6 @@ public:
 private:
     int id;
     int doctorId;
-    int departmentId;
     int dutyTime;
     long long dutyDate;
 };

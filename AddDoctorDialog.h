@@ -5,6 +5,8 @@
 
 #include "DoctorService.h"
 
+#include "DepartmentService.h"
+
 namespace Ui {
 class AddDoctorDialog;
 }
@@ -20,6 +22,8 @@ public:
     Doctor getInputDoctor();
 private:
     Ui::AddDoctorDialog *ui;
+
+    vector<Department> departments;
 };
 
 #endif // ADDDOCTORDIALOG_H

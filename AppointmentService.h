@@ -6,6 +6,7 @@
 #include "AppointmentDao.h"
 #include "DepartmentDao.h"
 #include "DutyDao.h"
+#include "DoctorDao.h"
 #include <vector>
 
 using namespace std;
@@ -15,6 +16,7 @@ private:
     AppointmentDao dao;
     DepartmentDao departmentDao;
     DutyDao dutyDao;
+    DoctorDao doctorDao;
 
 public:
 	AppointmentService();

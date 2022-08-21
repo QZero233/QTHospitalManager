@@ -18,12 +18,14 @@ public:
     Doctor():
         id(-1),
         name(""),
-        position(-1){}
+        position(-1),
+        departmentId(-1){}
 
-    Doctor(int id,string name,int position):
+    Doctor(int id,string name,int position,int departmentId):
         id(id),
         name(name),
-        position(position){}
+        position(position),
+        departmentId(departmentId){}
 
     void setId(int id){
         this->id=id;
@@ -48,10 +50,19 @@ public:
     int getPosition() const{
         return position;
     }
+
+    void setDepartmentId(int id){
+        departmentId=id;
+    }
+
+    int getDepartmentId() const{
+        return departmentId;
+    }
 private:
     int id;
     string name;
     int position;
+    int departmentId;
 
 
 };

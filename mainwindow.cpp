@@ -28,10 +28,10 @@
 #include "DutyDelegate.h"
 
 #include "AddDoctorDialog.h"
+#include "AddDutyDialog.h"
 
 using namespace std;
 
-//TODO check dependent relationship when deleting
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     deleteAction=new QAction("删除",ui->dataTable);
     appointmentsAction=new QAction("查看预约",ui->dataTable);
     tableMenu->addAction(editAction);
-    //tableMenu->addAction(deleteAction);
+    tableMenu->addAction(deleteAction);
     tableMenu->addAction(appointmentsAction);
     ui->dataTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->dataTable,SIGNAL(customContextMenuRequested(QPoint)),this,
@@ -59,12 +59,19 @@ MainWindow::MainWindow(QWidget *parent)
     connect(deleteAction,SIGNAL(triggered()),this,SLOT(dataTable_delete_triggered()));
     connect(appointmentsAction,SIGNAL(triggered()),this,SLOT(dataTable_appointments_triggered()));
 
-    //
-
     //Disable some menus before opening
     ui->actionSave->setVisible(false);
     ui->actionAdd->setVisible(false);
     ui->actionRegistration->setVisible(false);
+
+    ui->actionAdd->setVisible(false);
+    ui->actionaddDoctor->setVisible(false);
+    ui->actionaddDuty->setVisible(false);
+    ui->actiondepartments->setVisible(false);
+    ui->actiondoctors->setVisible(false);
+    ui->actionduties->setVisible(false);
+
+    on_actionOpen_triggered();
 }
 
 MainWindow::~MainWindow()
@@ -76,11 +83,18 @@ void MainWindow::dataTable_customContextMenuRequested(QPoint pos){
     QModelIndex index=ui->dataTable->indexAt(pos);
 
     if(index.isValid()){
+        if(mode==MODE_DEPARTMENT){
+            editAction->setVisible(true);
+            appointmentsAction->setVisible(true);
+        }else{
+            editAction->setVisible(false);
+            appointmentsAction->setVisible(false);
+        }
+
         contextMenuSelectedIndex=index.row();
 
-        if(mode==MODE_DEPARTMENT){
-            tableMenu->exec(QCursor::pos());
-        }
+
+        tableMenu->exec(QCursor::pos());
     }
 }
 
@@ -92,24 +106,60 @@ void MainWindow::dataTable_edit_triggered(){
 }
 
 void MainWindow::dataTable_delete_triggered(){
-    //Show confirm dialog
-    Department department=model->getDepartmentByIndex(contextMenuSelectedIndex);
+    if(mode==MODE_DEPARTMENT){
+        //Show confirm dialog
+        Department department=model->getDepartmentByIndex(contextMenuSelectedIndex);
 
-    QMessageBox box;
-    box.setText(("是否删除患门诊部门 "+department.getName()).c_str());
-    box.setInformativeText("此操作不可逆！");
-    box.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
-    box.setDefaultButton(QMessageBox::Ok);
-    int ret=box.exec();
-    if(ret==QMessageBox::Ok){
-        //Delete
-        try{
-            model->deleteDepartment(contextMenuSelectedIndex);
-            saved=false;
-        }catch(exception& e){
-            QMessageBox::critical(this,"删除失败",e.what());
+        QMessageBox box;
+        box.setText(("是否删除门诊部门 "+department.getName()).c_str());
+        box.setInformativeText("此操作不可逆！");
+        box.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
+        box.setDefaultButton(QMessageBox::Ok);
+        int ret=box.exec();
+        if(ret==QMessageBox::Ok){
+            //Delete
+            try{
+                model->deleteDepartment(contextMenuSelectedIndex);
+            }catch(exception& e){
+                QMessageBox::critical(this,"删除失败",e.what());
+            }
+        }
+    }else if(mode==MDOE_DOCTOR){
+        //Show confirm dialog
+        Doctor doctor=doctorModel->getDoctorByIndex(contextMenuSelectedIndex);
+
+        QMessageBox box;
+        box.setText(("是否删除医生 "+doctor.getName()).c_str());
+        box.setInformativeText("此操作不可逆！");
+        box.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
+        box.setDefaultButton(QMessageBox::Ok);
+        int ret=box.exec();
+        if(ret==QMessageBox::Ok){
+            //Delete
+            try{
+                doctorModel->deleteDoctor(contextMenuSelectedIndex);
+            }catch(exception& e){
+                QMessageBox::critical(this,"删除失败",e.what());
+            }
+        }
+    }else if(mode==MODE_DUTY){
+        //Show confirm dialog
+        QMessageBox box;
+        box.setText("是否删除该排班");
+        box.setInformativeText("此操作不可逆！");
+        box.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
+        box.setDefaultButton(QMessageBox::Ok);
+        int ret=box.exec();
+        if(ret==QMessageBox::Ok){
+            //Delete
+            try{
+                dutyModel->deleteDuty(contextMenuSelectedIndex);
+            }catch(exception& e){
+                QMessageBox::critical(this,"删除失败",e.what());
+            }
         }
     }
+
 }
 
 void MainWindow::dataTable_appointments_triggered(){
@@ -129,8 +179,6 @@ void MainWindow::showEditDepartmentDialog(int id){
             departmentService.updateDepartment(dialog.getStored());
             //Flush UI
             model->reloadFromDataSource();
-
-            saved=false;
         }  catch(exception& e) {
             QMessageBox::critical(this,"修改失败",e.what());
         }
@@ -140,9 +188,9 @@ void MainWindow::showEditDepartmentDialog(int id){
 void MainWindow::showAppointmentsDialog(int id){
     ShowAppointmentsDialog dialog(AppointmentService().
                                   getAllAppointmentsByDepartmentId(id));
+    dialog.setAllowDelete();
     dialog.exec();
     model->reloadFromDataSource();
-    saved=false;
 }
 
 void addTestData(){
@@ -162,19 +210,19 @@ void addTestData(){
         else if(i%3==2)
             position=Doctor::POSITION_JUNIOR;
 
-        Doctor doctor(i,"医生"+to_string(i),position);
+        Doctor doctor(i,"医生"+to_string(i),position,(i%5+1));
         doctorService.addDoctor(doctor);
     }
 
     //Add 6 duties
     DutyService dutyService;
     long long today=QDate::currentDate().toJulianDay();
-    dutyService.addDuty(Duty(1,1,2,Duty::TIME_AM,today));
-    dutyService.addDuty(Duty(2,1,2,Duty::TIME_PM,today));
-    dutyService.addDuty(Duty(3,3,1,Duty::TIME_AM,today));
-    dutyService.addDuty(Duty(4,4,1,Duty::TIME_PM,today));
-    dutyService.addDuty(Duty(5,5,4,Duty::TIME_AM,today));
-    dutyService.addDuty(Duty(6,6,5,Duty::TIME_PM,today));
+    dutyService.addDuty(Duty(1,1,Duty::TIME_AM,today));
+    dutyService.addDuty(Duty(2,1,Duty::TIME_PM,today));
+    dutyService.addDuty(Duty(3,3,Duty::TIME_AM,today));
+    dutyService.addDuty(Duty(4,4,Duty::TIME_PM,today));
+    dutyService.addDuty(Duty(5,5,Duty::TIME_AM,today));
+    dutyService.addDuty(Duty(6,6,Duty::TIME_PM,today));
 
     //Add 10 appointments
     AppointmentService appointmentService;
@@ -187,8 +235,8 @@ void MainWindow::on_actionOpen_triggered()
     //Init data source
     DataSource* dataSource=DataSource::getInstance();
     dataSource->setStorageFilePath("record.txt");
-    //dataSource->loadFromFile();
-    addTestData();
+    dataSource->loadFromFile();
+    //addTestData();
 
     model=new DepartmentModel(departmentService.getAllDepartments());
     ui->dataTable->setModel(model);
@@ -199,6 +247,11 @@ void MainWindow::on_actionOpen_triggered()
     ui->actionAdd->setVisible(true);
     ui->actionRegistration->setVisible(true);
 
+    ui->actiondepartments->setVisible(true);
+    ui->actiondoctors->setVisible(true);
+    ui->actionduties->setVisible(true);
+
+    controlMenuVisibilityByMode();
     //ui->dataTable->setColumnWidth(4,120);
     //ui->dataTable->setColumnWidth(5,100);
 }
@@ -228,22 +281,20 @@ void MainWindow::on_actionSave_triggered()
 {
     DataSource* dataSource=DataSource::getInstance();
     dataSource->saveToFile();
-    saved=true;
 }
 
 void MainWindow::closeEvent(QCloseEvent* event){
-    /*if(!saved){
-        int ret=QMessageBox::question(this,"是否关闭","数据更改后未保存，可能引发数据丢失");
+    try{
+        DataSource* dataSource=DataSource::getInstance();
+        dataSource->saveToFile();
+    }catch(exception& e){
+        int ret=QMessageBox::question(this,"是否关闭","自动保存失败，现在关闭将引发数据损失");
         if(ret!=QMessageBox::Yes){
             event->ignore();
         }else{
             event->accept();
         }
-    }else{
-        event->accept();
-    }*/
-
-    //TODO remove the remarks to enable exit warning
+    }
 }
 
 void MainWindow::on_actionAdd_triggered()
@@ -268,7 +319,6 @@ void MainWindow::on_actionAdd_triggered()
         try {
             //Add
             model->addDepartment(dialog.getStored());
-            saved=false;
         }  catch(exception& e) {
             QMessageBox::critical(this,"添加失败",e.what());
         }
@@ -296,7 +346,7 @@ void MainWindow::on_actionduties_triggered()
     ui->dataTable->setModel(dutyModel);
     ui->dataTable->setItemDelegate(dutyDelegate);
 
-    //TODO disable some menus
+    controlMenuVisibilityByMode();
 }
 
 void MainWindow::on_actiondepartments_triggered()
@@ -307,7 +357,7 @@ void MainWindow::on_actiondepartments_triggered()
     ui->dataTable->setModel(model);
     ui->dataTable->setItemDelegate(delegate);
 
-    //TODO disable some menus
+    controlMenuVisibilityByMode();
 }
 
 void MainWindow::on_actiondoctors_triggered()
@@ -321,8 +371,15 @@ void MainWindow::on_actiondoctors_triggered()
         doctorModel->setDoctorsAndReload(doctors);
     }
 
+    if(doctorDelegate!=NULL){
+        delete doctorDelegate;
+        doctorDelegate=new DoctorDelegate();
+    }
+
     ui->dataTable->setModel(doctorModel);
     ui->dataTable->setItemDelegate(doctorDelegate);
+
+    controlMenuVisibilityByMode();
 }
 
 void MainWindow::on_actionaddDoctor_triggered()
@@ -335,5 +392,35 @@ void MainWindow::on_actionaddDoctor_triggered()
         }  catch (exception& e) {
             QMessageBox::critical(this,"错误",e.what());
         }
+    }
+}
+
+void MainWindow::on_actionaddDuty_triggered()
+{
+    AddDutyDialog dialog;
+    if(dialog.exec()==QDialog::Accepted){
+        try {
+            dutyModel->addDuty(dialog.getInputDuty());
+        }  catch (exception& e) {
+            QMessageBox::critical(this,"错误",e.what());
+        }
+    }
+}
+
+void MainWindow::controlMenuVisibilityByMode(){
+    ui->actionAdd->setVisible(false);
+    ui->actionaddDoctor->setVisible(false);
+    ui->actionaddDuty->setVisible(false);
+
+    switch(mode){
+    case MODE_DEPARTMENT:
+        ui->actionAdd->setVisible(true);
+        break;
+    case MDOE_DOCTOR:
+        ui->actionaddDoctor->setVisible(true);
+        break;
+    case MODE_DUTY:
+        ui->actionaddDuty->setVisible(true);
+        break;
     }
 }

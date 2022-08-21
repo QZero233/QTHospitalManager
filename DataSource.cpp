@@ -18,40 +18,42 @@ void DataSource::setStorageFilePath(const string& fileName) {
 }
 
 void DataSource::loadFromFile() {
-    //fstream fs(storageFileName,ios::in);
+    fstream fs(storageFileName,ios::in);
     //Departments first
     /*
      * int id;
     string name;
-    int idOfDutyDoctor;
-    long appointmentStartTime=-1;
-    long appointmentEndTime=-1;
-    int capacity;
     string address;
     string telephone;
     */
     departments.clear();
     appointments.clear();
-    /*while(true){
+    doctors.clear();
+    duties.clear();
+
+    while(true){
         int id;
         fs>>id;
         if(id==-1)
             break;
 
         string name;
-        int idOfDutyDoctor;
-        long appointmentStartTime=-1;
-        long appointmentEndTime=-1;
-        int capacity;
         string address;
         string telephone;
 
-        fs>>name>>idOfDutyDoctor>>appointmentStartTime>>appointmentEndTime>>capacity>>address>>telephone;
+        fs>>name>>address>>telephone;
 
-        departments.push_back(Department(id,name,idOfDutyDoctor,appointmentStartTime,appointmentEndTime,
-                                         capacity,address,telephone));
+        departments.push_back(Department(id,name,address,telephone));
     }
 
+    /*
+     * int id;
+    string name;
+    string telephone;
+    int gender;
+    int age;
+    int dutyId;
+    */
     while(true){
         int id;
         fs>>id;
@@ -62,10 +64,9 @@ void DataSource::loadFromFile() {
         string telephone;
         int gender;
         int age;
-        long appointmentTime;
-        int departmentId;
+        int dutyId;
 
-        fs>>name>>telephone>>gender>>age>>appointmentTime>>departmentId;
+        fs>>name>>telephone>>gender>>age>>dutyId;
 
         Appointment appointment;
         appointment.setId(id);
@@ -73,13 +74,56 @@ void DataSource::loadFromFile() {
         appointment.setTelephone(telephone);
         appointment.setAge(age);
         appointment.setGender(gender);
-        appointment.setAppointmentTime(appointmentTime);
-        appointment.setDepartmentId(departmentId);
+        appointment.setDutyId(dutyId);
 
         appointments.push_back(appointment);
     }
 
-    fs.close();*/
+    //Then doctors
+    /*
+     * int id;
+    string name;
+    int position;
+    int departmentId;
+     */
+    while(true){
+        int id;
+        fs>>id;
+        if(id==-1)
+            break;
+
+        string name;
+        int position;
+        int departmentId;
+
+        fs>>name>>position>>departmentId;
+
+        doctors.push_back(Doctor(id,name,position,departmentId));
+    }
+
+    //The duties
+    /*
+     * int id;
+    int doctorId;
+    int dutyTime;
+    long long dutyDate;
+     */
+    while(true){
+        int id;
+        fs>>id;
+        if(id==-1)
+            break;
+
+        int doctorId;
+        int dutyTime;
+        long long dutyDate;
+
+        fs>>doctorId>>dutyTime>>dutyDate;
+
+        duties.push_back(Duty(id,doctorId,dutyTime,dutyDate));
+    }
+
+    fs.close();
 }
 
 void DataSource::saveToFile() {
@@ -87,25 +131,17 @@ void DataSource::saveToFile() {
     /*
      * int id;
     string name;
-    int idOfDutyDoctor;
-    long appointmentStartTime=-1;
-    long appointmentEndTime=-1;
-    int capacity;
     string address;
     string telephone;
     */
-    /*fstream fs(storageFileName,ios::out);
+    fstream fs(storageFileName,ios::out);
     for(Department department:departments){
         fs<<department.getId()<<endl
          <<department.getName()<<endl
-        <<department.getIdOfDutyDoctor()<<endl
-        <<department.getAppointmentStartTime()<<endl
-        <<department.getAppointmentEndTime()<<endl
-        <<department.getCapacity()<<endl
         <<department.getAddress()<<endl
         <<department.getTelephone()<<endl;
     }
-    fs<<-1<<endl;*/
+    fs<<-1<<endl;
 
     //Then appointments
     /*
@@ -114,21 +150,49 @@ void DataSource::saveToFile() {
     string telephone;
     int gender;
     int age;
-    long appointmentTime;
-    int departmentId;
+    int dutyId;
     */
-    /*for(Appointment appointment:appointments){
+    for(Appointment appointment:appointments){
         fs<<appointment.getId()<<endl
          <<appointment.getName()<<endl
         <<appointment.getTelephone()<<endl
         <<appointment.getGender()<<endl
         <<appointment.getAge()<<endl
-        <<appointment.getAppointmentTime()<<endl
-        <<appointment.getDepartmentId()<<endl;
+        <<appointment.getDutyId()<<endl;
     }
-    fs<<-1;
+    fs<<-1<<endl;
 
-    fs.close();*/
+    //Then doctors
+    /*
+     * int id;
+    string name;
+    int position;
+    int departmentId;
+     */
+    for(Doctor doctor:doctors){
+        fs<<doctor.getId()<<endl
+         <<doctor.getName()<<endl
+        <<doctor.getPosition()<<endl
+        <<doctor.getDepartmentId()<<endl;
+    }
+    fs<<-1<<endl;
+
+    //The duties
+    /*
+     * int id;
+    int doctorId;
+    int dutyTime;
+    long long dutyDate;
+     */
+    for(Duty duty:duties){
+        fs<<duty.getId()<<endl
+         <<duty.getDoctorId()<<endl
+        <<duty.getDutyTime()<<endl
+        <<duty.getDutyDate()<<endl;
+    }
+    fs<<-1<<endl;
+
+    fs.close();
 }
 
 vector<Department>* DataSource::getDepartmentsPtr(){
