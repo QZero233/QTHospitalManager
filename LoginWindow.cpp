@@ -22,6 +22,9 @@ LoginWindow::LoginWindow(QWidget *parent) :
     dataSource->setStorageFilePath("record.txt");
     dataSource->loadFromFile();
     //addTestData();
+
+    ui->label->setVisible(admin);
+    ui->lineEdit_pwd->setVisible(admin);
 }
 
 LoginWindow::~LoginWindow()
@@ -69,24 +72,30 @@ void addTestData(){
 
 void LoginWindow::on_pushButton_clicked()
 {
-    //Admin
-    if(ui->lineEdit_pwd->text()==""){
+    if(admin){
+        //Admin
+        if(ui->lineEdit_pwd->text()==""){
+            //QMessageBox::information(this,"成功","欢迎登陆");
+
+            MainWindow* win=new MainWindow;
+            win->show();
+            close();
+        }else{
+            QMessageBox::critical(this,"错误","密码错误");
+        }
+    }else{
+        //Patient
         //QMessageBox::information(this,"成功","欢迎登陆");
 
-        MainWindow* win=new MainWindow;
+        RegistrationWindow* win=new RegistrationWindow;
         win->show();
         close();
-    }else{
-        QMessageBox::critical(this,"错误","密码错误");
     }
 }
 
-void LoginWindow::on_pushButton_2_clicked()
+void LoginWindow::on_radioButton_patient_toggled(bool checked)
 {
-    //Patient
-    //QMessageBox::information(this,"成功","欢迎登陆");
-
-    RegistrationWindow* win=new RegistrationWindow;
-    win->show();
-    close();
+    admin=!checked;
+    ui->label->setVisible(admin);
+    ui->lineEdit_pwd->setVisible(admin);
 }
