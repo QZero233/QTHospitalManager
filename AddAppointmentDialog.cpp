@@ -5,6 +5,8 @@
 #include "DoctorService.h"
 #include "AppointmentService.h"
 
+#include <QMessageBox>
+
 AddAppointmentDialog::AddAppointmentDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddAppointmentDialog)
@@ -40,10 +42,36 @@ void AddAppointmentDialog::setDuty(Duty duty){
     }
 
     ui->label_depaerment->setText(("预约科室："+department.getName()).c_str());
-    ui->label_time->setText(("预约时间："+duty.formatDutyDateTime()).c_str());
+    ui->label_time->setText(("预约时间："+duty.formatDutyDateAndTimePeriod()).c_str());
     ui->label_doctor->setText(("预约医生："+doctor.getName()+"("+doctorPosition+")").c_str());
 
     dutyId=duty.getId();
+
+    timePeriods=Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod());
+
+    AppointmentService appointmentService;
+    int i=0;
+    for(int period:timePeriods){
+        string p=Appointment::toStringPeriod(period);
+
+        //Get status
+        int periodCapacity=duty.getCapacityEachPeriod();
+        int appointmentCount=appointmentService.getCountByIdAndTimePeriod(duty.getId(),
+                                                                          period);
+
+        int remain=periodCapacity-appointmentCount;
+
+        ui->comboBox_time_period->addItem((p+"("+to_string(appointmentCount)+"/"+
+                                           to_string(periodCapacity)+")"+
+                                           (remain<=0?
+                                            "已满":"")).c_str());
+
+        if(remain<=0){
+            fullIndexes.push_back(i);
+        }
+
+        i++;
+    }
 }
 
 Appointment AddAppointmentDialog::getInputAppointment(){
@@ -56,5 +84,15 @@ Appointment AddAppointmentDialog::getInputAppointment(){
     appointment.setDutyId(dutyId);
     appointment.setGender(ui->comboBox_gender->currentIndex()==0?
                               Appointment::GENDER_MALE:Appointment::GENDER_FEMALE);
+    appointment.setTimePeriod(timePeriods[ui->comboBox_time_period->currentIndex()]);
     return appointment;
+}
+
+void AddAppointmentDialog::on_comboBox_time_period_activated(int index)
+{
+    for(int i:fullIndexes){
+        if(i==index){
+            //QMessageBox::critical(this,"错误","请注意，此时段预约已满");
+        }
+    }
 }

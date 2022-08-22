@@ -15,10 +15,11 @@
 
 #include "SelectDutyDialog.h"
 
-RegistrationWindow::RegistrationWindow(MainWindow* win,QWidget *parent) :
+#include <QCloseEvent>
+
+RegistrationWindow::RegistrationWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::RegistrationWindow),
-    win(win)
+    ui(new Ui::RegistrationWindow)
 {
     ui->setupUi(this);
 
@@ -37,32 +38,12 @@ RegistrationWindow::~RegistrationWindow()
     delete ui;
 }
 
-void RegistrationWindow::closeEvent(QCloseEvent* event){
-    QMessageBox::critical(this,"失败","请使用工具栏上的退出按钮退出");
-    event->ignore();
-}
-
 void RegistrationWindow::resizeEvent(QResizeEvent *event){
     QMainWindow::resizeEvent(event);
 
     int x = this->frameGeometry().width();
     int y = this->frameGeometry().height();
     ui->dataTable->setGeometry(5,5,x*0.99,y*0.99);
-}
-
-void RegistrationWindow::on_actionExit_triggered()
-{
-    InputPasswordDialog dialog;
-    if(dialog.exec()==QDialog::Accepted){
-        QString pwd=dialog.getPwd();
-        if(pwd==DataSource::getInstance()->getPassword().c_str()){
-            //Exit
-            win->show();
-            delete this;
-        }else{
-            QMessageBox::critical(this,"退出失败","密码不正确");
-        }
-    }
 }
 
 void RegistrationWindow::on_actionSelect_triggered()
@@ -97,5 +78,19 @@ void RegistrationWindow::on_actionQueryAppointment_triggered()
         ShowAppointmentsDialog d(appointments);
         d.setAllowDelete();
         d.exec();
+    }
+}
+
+void RegistrationWindow::closeEvent(QCloseEvent* event){
+    try{
+        DataSource* dataSource=DataSource::getInstance();
+        dataSource->saveToFile();
+    }catch(exception& e){
+        int ret=QMessageBox::question(this,"是否关闭","自动保存失败，现在关闭将引发数据损失");
+        if(ret!=QMessageBox::Yes){
+            event->ignore();
+        }else{
+            event->accept();
+        }
     }
 }

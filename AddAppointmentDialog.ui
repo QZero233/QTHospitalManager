@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>260</height>
+    <height>345</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>220</y>
+     <x>40</x>
+     <y>280</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -72,7 +72,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>80</y>
+     <y>120</y>
      <width>61</width>
      <height>16</height>
     </rect>
@@ -85,7 +85,7 @@
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>80</y>
+     <y>120</y>
      <width>301</width>
      <height>20</height>
     </rect>
@@ -95,7 +95,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>110</y>
+     <y>150</y>
      <width>61</width>
      <height>16</height>
     </rect>
@@ -108,7 +108,7 @@
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>110</y>
+     <y>150</y>
      <width>42</width>
      <height>22</height>
     </rect>
@@ -124,7 +124,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>140</y>
+     <y>180</y>
      <width>61</width>
      <height>16</height>
     </rect>
@@ -137,7 +137,7 @@
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>140</y>
+     <y>180</y>
      <width>72</width>
      <height>22</height>
     </rect>
@@ -147,7 +147,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>180</y>
+     <y>220</y>
      <width>51</width>
      <height>16</height>
     </rect>
@@ -160,9 +160,32 @@
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>180</y>
+     <y>220</y>
      <width>281</width>
      <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>71</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>预约时间段</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_time_period">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>80</y>
+     <width>171</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>

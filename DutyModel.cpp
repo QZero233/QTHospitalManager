@@ -9,20 +9,27 @@
 DutyModel::DutyModel(vector<Duty> duties,QObject *parent):
 QAbstractTableModel(parent)
 {
-
+    this->duties=duties;
     //Sort duties by status
+    sortByStatus();
+}
+
+void DutyModel::sortByStatus(){
     vector<Duty> vacant,occupied;
     AppointmentService appointmentService;
     for(Duty duty:duties){
-        if(appointmentService.existByDutyId(duty.getId()))
+        int capacity=service.getCapacityById(duty.getId());
+        int current=appointmentService.getCountByDutyId(duty.getId());
+
+        if(capacity-current<=0)
             occupied.push_back(duty);
         else
             vacant.push_back(duty);
     }
 
-    this->duties=vacant;
+    duties=vacant;
     for(Duty duty:occupied){
-        this->duties.push_back(duty);
+        duties.push_back(duty);
     }
 }
 
@@ -52,19 +59,24 @@ QVariant DutyModel::data(const QModelIndex &index, int role) const{
     Duty duty=duties.at(row);
     Doctor doctor=DoctorService().getDoctor(duty.getDoctorId());
     Department department=DepartmentService().getDepartment(doctor.getDepartmentId());
-    bool occupied=AppointmentService().existByDutyId(duty.getId());
+
+    DutyService service;
+    AppointmentService appointmentService;
+    int capacity=service.getCapacityById(duty.getId());
+    int current=appointmentService.getCountByDutyId(duty.getId());
+    bool occupied=capacity-current<=0;
     switch(column){
     case 0:
         return duty.getId();
     case 1:
         return doctor.getName().c_str();
     case 2:
-        return duty.formatDutyDateTime().c_str();
+        return duty.formatDutyDateAndTimePeriod().c_str();
     case 3:
         return department.getName().c_str();
     case 4:
         if(role==Qt::DisplayRole)
-            return occupied?"已被预约":"空闲";
+            return occupied?"已满":"剩余 "+QString::number(capacity-current);
         else
             return occupied;
     default:
@@ -137,20 +149,9 @@ void DutyModel::reloadFromDataSource(){
 }
 
 void DutyModel::setDutiesAndReload(const vector<Duty>& duties){
+    this->duties=duties;
     //Sort duties by status
-    vector<Duty> vacant,occupied;
-    AppointmentService appointmentService;
-    for(Duty duty:duties){
-        if(appointmentService.existByDutyId(duty.getId()))
-            occupied.push_back(duty);
-        else
-            vacant.push_back(duty);
-    }
-
-    this->duties=vacant;
-    for(Duty duty:occupied){
-        this->duties.push_back(duty);
-    }
+    sortByStatus();
     reloadFromDataSource();
 }
 

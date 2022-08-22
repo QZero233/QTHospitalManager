@@ -47,11 +47,9 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionSelect"/>
-   <addaction name="actionShowAll"/>
    <addaction name="separator"/>
    <addaction name="actionQueryAppointment"/>
-   <addaction name="separator"/>
-   <addaction name="actionExit"/>
+   <addaction name="actionShowAll"/>
   </widget>
   <action name="actionExit">
    <property name="icon">

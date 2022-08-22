@@ -33,6 +33,7 @@ SOURCES += \
     DutyService.cpp \
     InputPasswordDialog.cpp \
     InputTelDialog.cpp \
+    LoginWindow.cpp \
     QueryAppointmentDialog.cpp \
     ReadOnlyDelegate.cpp \
     RegistrationWindow.cpp \
@@ -71,6 +72,7 @@ HEADERS += \
     DutyService.h \
     InputPasswordDialog.h \
     InputTelDialog.h \
+    LoginWindow.h \
     QueryAppointmentDialog.h \
     ReadOnlyDelegate.h \
     RegistrationWindow.h \
@@ -87,6 +89,7 @@ FORMS += \
     AddDutyDialog.ui \
     InputPasswordDialog.ui \
     InputTelDialog.ui \
+    LoginWindow.ui \
     QueryAppointmentDialog.ui \
     RegistrationWindow.ui \
     SelectDutyDialog.ui \

@@ -71,8 +71,6 @@
    <addaction name="actiondepartments"/>
    <addaction name="actiondoctors"/>
    <addaction name="actionduties"/>
-   <addaction name="separator"/>
-   <addaction name="actionRegistration"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">

@@ -53,7 +53,7 @@ QVariant AppointmentModel::data(const QModelIndex &index, int role) const{
     case 3:
         return QVariant(appointment.getAge());
     case 4:
-        return duty.formatDutyDateTime().c_str();
+        return (duty.formatDutyDateAndTimePeriod()+" "+appointment.formatTimePeriod()).c_str();
     case 5:
         return QVariant(appointment.getTelephone().c_str());
     case 6:

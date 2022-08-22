@@ -53,6 +53,7 @@ void DataSource::loadFromFile() {
     int gender;
     int age;
     int dutyId;
+    int timePeriod;
     */
     while(true){
         int id;
@@ -65,8 +66,9 @@ void DataSource::loadFromFile() {
         int gender;
         int age;
         int dutyId;
+        int timePeriod;
 
-        fs>>name>>telephone>>gender>>age>>dutyId;
+        fs>>name>>telephone>>gender>>age>>dutyId>>timePeriod;
 
         Appointment appointment;
         appointment.setId(id);
@@ -75,6 +77,7 @@ void DataSource::loadFromFile() {
         appointment.setAge(age);
         appointment.setGender(gender);
         appointment.setDutyId(dutyId);
+        appointment.setTimePeriod(timePeriod);
 
         appointments.push_back(appointment);
     }
@@ -105,8 +108,9 @@ void DataSource::loadFromFile() {
     /*
      * int id;
     int doctorId;
-    int dutyTime;
+    int dutyTimePeriod;
     long long dutyDate;
+    int capacityEachPeriod;
      */
     while(true){
         int id;
@@ -115,12 +119,13 @@ void DataSource::loadFromFile() {
             break;
 
         int doctorId;
-        int dutyTime;
+        int dutyTimePeriod;
         long long dutyDate;
+        int capacityEachPeriod;
 
-        fs>>doctorId>>dutyTime>>dutyDate;
+        fs>>doctorId>>dutyTimePeriod>>dutyDate>>capacityEachPeriod;
 
-        duties.push_back(Duty(id,doctorId,dutyTime,dutyDate));
+        duties.push_back(Duty(id,doctorId,dutyTimePeriod,dutyDate,capacityEachPeriod));
     }
 
     fs.close();
@@ -151,6 +156,7 @@ void DataSource::saveToFile() {
     int gender;
     int age;
     int dutyId;
+    int timePeriod;
     */
     for(Appointment appointment:appointments){
         fs<<appointment.getId()<<endl
@@ -158,7 +164,8 @@ void DataSource::saveToFile() {
         <<appointment.getTelephone()<<endl
         <<appointment.getGender()<<endl
         <<appointment.getAge()<<endl
-        <<appointment.getDutyId()<<endl;
+        <<appointment.getDutyId()<<endl
+        <<appointment.getTimePeriod()<<endl;
     }
     fs<<-1<<endl;
 
@@ -181,14 +188,16 @@ void DataSource::saveToFile() {
     /*
      * int id;
     int doctorId;
-    int dutyTime;
+    int dutyTimePeriod;
     long long dutyDate;
+    int capacityEachPeriod;
      */
     for(Duty duty:duties){
         fs<<duty.getId()<<endl
          <<duty.getDoctorId()<<endl
-        <<duty.getDutyTime()<<endl
-        <<duty.getDutyDate()<<endl;
+        <<duty.getDutyTimePeriod()<<endl
+        <<duty.getDutyDate()<<endl
+        <<duty.getCapacityEachPeriod()<<endl;
     }
     fs<<-1<<endl;
 

@@ -42,7 +42,10 @@ void ShowDepartmentDutiesDialog::on_dataTable_doubleClicked(const QModelIndex &i
 
     Duty duty=model->getDutyByIndex(index.row());
 
-    if(AppointmentService().existByDutyId(duty.getId())){
+    int capacity=DutyService().getCapacityById(duty.getId());
+    int appointment=AppointmentService().getCountByDutyId(duty.getId());
+
+    if(capacity-appointment<=0){
         QMessageBox::critical(this,"错误","此时段已被预约");
         return;
     }

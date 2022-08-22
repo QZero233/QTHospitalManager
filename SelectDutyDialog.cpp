@@ -53,15 +53,18 @@ vector<Duty> SelectDutyDialog::getSatsfitedDuties(){
         if(!ui->checkBox_no_time->isChecked()){
             long long date=ui->dateEdit_date->date().toJulianDay();
             int time=ui->comboBox_time->currentIndex()==0?
-                        Duty::TIME_AM:Duty::TIME_PM;
+                        Duty::TIME_PERIOD_AM:Duty::TIME_PERIOD_PM;
 
-            if(date!=duty.getDutyDate() || time!=duty.getDutyTime())
+            if(date!=duty.getDutyDate() || time!=duty.getDutyTimePeriod())
                 continue;
         }
 
         if(ui->checkBox_free->isChecked()){
             //Check if the duty is free
-            if(AppointmentService().existByDutyId(duty.getId()))
+            int appointmentCount=AppointmentService().getCountByDutyId(duty.getId());
+            int capacity=DutyService().getCapacityById(duty.getId());
+
+            if(appointmentCount>=capacity)
                 continue;
         }
 

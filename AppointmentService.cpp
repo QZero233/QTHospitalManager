@@ -28,10 +28,15 @@ throw(invalid_argument,runtime_error){
         throw invalid_argument("已经有ID为" + to_string(appointment.getId()) + "的预约信息存在");
 	}
 
-    //Check if the duty is reserved
-    if(dao.existByDutyId(appointment.getDutyId())){
-        throw runtime_error("无法添加预约，该时段该医生已被预约");
-    }
+    //Check if appointment number exceeds capacity in this time period
+    int appointmentsCountInPeriod=getCountByIdAndTimePeriod(appointment.getDutyId(),
+                                               appointment.getTimePeriod());
+    Duty duty=dutyDao.getDuty(appointment.getDutyId());
+    int capacity=duty.getCapacityEachPeriod()*
+            Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod()).size();
+
+    if(capacity<=appointmentsCountInPeriod)
+        throw runtime_error("该时段已被预约满，无法进行预约");
 
     dao.addAppointment(appointment);
 }
@@ -82,4 +87,30 @@ int AppointmentService::getUniqueId(){
             biggestId=appointments[i].getId();
     }
     return biggestId+1;
+}
+
+int AppointmentService::getCountByDutyId(int id){
+    int result=0;
+
+    vector<Appointment> appointments=dao.getAllAppointments();
+    for(int i=0;i<appointments.size();i++){
+        if(appointments[i].getDutyId()==id){
+            result++;
+        }
+    }
+
+    return result;
+}
+
+int AppointmentService::getCountByIdAndTimePeriod(int id,int timePeriod){
+    int result=0;
+
+    vector<Appointment> appointments=dao.getAllAppointments();
+    for(int i=0;i<appointments.size();i++){
+        if(appointments[i].getDutyId()==id && appointments[i].getTimePeriod()==timePeriod){
+            result++;
+        }
+    }
+
+    return result;
 }

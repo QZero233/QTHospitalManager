@@ -31,6 +31,8 @@ public:
     vector<Duty> getAllByDepartmentId(int departmentId);
 
     int getUniqueId();
+
+    int getCapacityById(int id);
 };
 
 #endif // DUTYSERVICE_H

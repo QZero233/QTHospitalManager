@@ -12,19 +12,20 @@ DutyService::DutyService() {
 void DutyService::checkDutyDataMembers(const Duty& duty) throw(invalid_argument){
     if(!doctorDao.existById(duty.getDoctorId()))
         throw invalid_argument("不存在ID为 "+to_string(duty.getDoctorId())+" 的医生");
+}
+
+void DutyService::addDuty(const Duty& duty) throw(invalid_argument) {
+    checkDutyDataMembers(duty);
 
     vector<Duty> duties=dao.getAllDuties();
     for(Duty data:duties){
         if(data.getDoctorId()!=duty.getDoctorId())
             continue;
 
-        if(data.getDutyDate()==duty.getDutyDate() && data.getDutyTime()==duty.getDutyTime())
-            throw invalid_argument("该医生在该时段存在预约，无法添加");
+        if(data.getDutyDate()==duty.getDutyDate() && data.getDutyTimePeriod()==duty.getDutyTimePeriod())
+            throw invalid_argument("该医生在该时段已排班，无法添加");
     }
-}
 
-void DutyService::addDuty(const Duty& duty) throw(invalid_argument) {
-    checkDutyDataMembers(duty);
     dao.addDuty(duty);
 }
 
@@ -74,6 +75,19 @@ int DutyService::getUniqueId(){
     }
 
     return id+1;
+}
+
+int DutyService::getCapacityById(int id){
+    int result=0;
+    vector<Duty> duties=dao.getAllDuties();
+    for(Duty duty:duties){
+        if(duty.getId()==id){
+            result+=duty.getCapacityEachPeriod()*
+                    Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod()).size();
+        }
+    }
+
+    return result;
 }
 
 

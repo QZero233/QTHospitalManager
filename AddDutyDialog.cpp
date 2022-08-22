@@ -3,6 +3,8 @@
 
 #include "DutyService.h"
 
+#include <QIntValidator>
+
 AddDutyDialog::AddDutyDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddDutyDialog)
@@ -18,6 +20,9 @@ AddDutyDialog::AddDutyDialog(QWidget *parent) :
     for(Doctor doctor:doctors){
         ui->comboBox_doctor->addItem(doctor.getName().c_str());
     }
+
+    ui->lineEdit_capacity->setValidator(new QIntValidator());
+    ui->lineEdit_capacity->setText("10");
 }
 
 AddDutyDialog::~AddDutyDialog()
@@ -31,7 +36,9 @@ Duty AddDutyDialog::getInputDuty(){
     duty.setId(DutyService().getUniqueId());
     duty.setDoctorId(doctors[ui->comboBox_doctor->currentIndex()].getId());
     duty.setDutyDate(ui->dateEdit_date->date().toJulianDay());
-    duty.setDutyTime(ui->comboBox_time->currentIndex()==0?Duty::TIME_AM:Duty::TIME_PM);
+    duty.setDutyTimePeriod(ui->comboBox_time->currentIndex()==0?
+                               Duty::TIME_PERIOD_AM:Duty::TIME_PERIOD_PM);
+    duty.setCapacityEachPeriod(ui->lineEdit_capacity->text().toInt());
 
     return duty;
 }

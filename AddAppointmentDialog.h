@@ -21,10 +21,17 @@ public:
     void setDuty(Duty duty);
     Appointment getInputAppointment();
 
+private slots:
+    void on_comboBox_time_period_activated(int index);
+
 private:
     Ui::AddAppointmentDialog *ui;
 
     int dutyId;
+
+    vector<int> timePeriods;
+
+    vector<int> fullIndexes;
 };
 
 #endif // ADDAPPOINTMENTDIALOG_H

@@ -3,6 +3,8 @@
 #include <QDateTime>
 #include <stdexcept>
 
+#include "Appointment.h"
+
 using namespace std;
 
 DepartmentService::DepartmentService() {
@@ -60,8 +62,11 @@ int DepartmentService::getCapacityById(int departmentId){
     vector<Duty> duties=dutyDao.getAllDuties();
     for(Duty duty:duties){
         Doctor doctor=doctorDao.getDoctor(duty.getDoctorId());
-        if(doctor.getDepartmentId()==departmentId)
-            result++;
+        if(doctor.getDepartmentId()==departmentId){
+            int current=duty.getCapacityEachPeriod();
+            current*=Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod()).size();
+            result+=current;
+        }
     }
     return result;
 }

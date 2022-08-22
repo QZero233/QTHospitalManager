@@ -193,51 +193,9 @@ void MainWindow::showAppointmentsDialog(int id){
     model->reloadFromDataSource();
 }
 
-void addTestData(){
-    //Add 5 departments
-    DepartmentService departmentService;
-    for(int i=1;i<=5;i++){
-        Department department(i,"科室"+to_string(i),"地址1"+to_string(i),"电话1"+to_string(i));
-        departmentService.addDepartment(department);
-    }
-
-    //Add 10 doctors
-    DoctorService doctorService;
-    for(int i=1;i<=10;i++){
-        int position=Doctor::POSITION_PRACTICE;
-        if(i%3==1)
-            position=Doctor::POSITION_SENIOR;
-        else if(i%3==2)
-            position=Doctor::POSITION_JUNIOR;
-
-        Doctor doctor(i,"医生"+to_string(i),position,(i%5+1));
-        doctorService.addDoctor(doctor);
-    }
-
-    //Add 6 duties
-    DutyService dutyService;
-    long long today=QDate::currentDate().toJulianDay();
-    dutyService.addDuty(Duty(1,1,Duty::TIME_AM,today));
-    dutyService.addDuty(Duty(2,1,Duty::TIME_PM,today));
-    dutyService.addDuty(Duty(3,3,Duty::TIME_AM,today));
-    dutyService.addDuty(Duty(4,4,Duty::TIME_PM,today));
-    dutyService.addDuty(Duty(5,5,Duty::TIME_AM,today));
-    dutyService.addDuty(Duty(6,6,Duty::TIME_PM,today));
-
-    //Add 10 appointments
-    AppointmentService appointmentService;
-    appointmentService.addAppointment(Appointment(1,"预约1","电话1",0,18,2));
-    appointmentService.addAppointment(Appointment(2,"预约2","电话2",1,18,5));
-}
 
 void MainWindow::on_actionOpen_triggered()
 {
-    //Init data source
-    DataSource* dataSource=DataSource::getInstance();
-    dataSource->setStorageFilePath("record.txt");
-    dataSource->loadFromFile();
-    //addTestData();
-
     model=new DepartmentModel(departmentService.getAllDepartments());
     ui->dataTable->setModel(model);
 

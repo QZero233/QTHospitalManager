@@ -24,6 +24,8 @@ public:
     void reloadFromDataSource();
 
     void setDutiesAndReload(const vector<Duty>& duties);
+
+    void sortByStatus();
 private:
     vector<Duty> duties;
 

@@ -4,25 +4,29 @@
 #include <string>
 #include <QDate>
 
+#include <vector>
+
 using namespace std;
 
 class Duty
 {
 public:
-    static const int TIME_AM=1;
-    static const int TIME_PM=2;
+    static const int TIME_PERIOD_AM=1;
+    static const int TIME_PERIOD_PM=2;
 
     Duty():
         id(-1),
         doctorId(-1),
-        dutyTime(-1),
-        dutyDate(-1){}
+        dutyTimePeriod(-1),
+        dutyDate(-1),
+        capacityEachPeriod(-1){}
 
-    Duty(int id,int doctorId,int dutyTime,long long dutyDate):
+    Duty(int id,int doctorId,int dutyTimePeriod,long long dutyDate,int capacityEachPeriod):
         id(id),
         doctorId(doctorId),
-        dutyTime(dutyTime),
-        dutyDate(dutyDate){}
+        dutyTimePeriod(dutyTimePeriod),
+        dutyDate(dutyDate),
+        capacityEachPeriod(capacityEachPeriod){}
 
     void setId(int id){
         this->id=id;
@@ -40,12 +44,12 @@ public:
         return doctorId;
     }
 
-    void setDutyTime(int dutyTime){
-        this->dutyTime=dutyTime;
+    void setDutyTimePeriod(int dutyTimePeriod){
+        this->dutyTimePeriod=dutyTimePeriod;
     }
 
-    int getDutyTime() const{
-        return dutyTime;
+    int getDutyTimePeriod() const{
+        return dutyTimePeriod;
     }
 
     void setDutyDate(long long dutyDate){
@@ -56,27 +60,37 @@ public:
         return dutyDate;
     }
 
-    string formatDutyTime(){
-        switch(dutyTime){
-        case TIME_AM:
+    void setCapacityEachPeriod(int capacity){
+        capacityEachPeriod=capacity;
+    }
+
+    int getCapacityEachPeriod() const{
+        return capacityEachPeriod;
+    }
+
+    string formatDutyTimePeriod(){
+        switch(dutyTimePeriod){
+        case TIME_PERIOD_AM:
             return "上午";
-        case TIME_PM:
+        case TIME_PERIOD_PM:
             return "下午";
         default:
             return "";
         }
     }
 
-    string formatDutyDateTime(){
+    string formatDutyDateAndTimePeriod(){
         QDate date=QDate::fromJulianDay(dutyDate);
         QString formattedDate=date.toString("yyyy-MM-dd ");
-        return formattedDate.toStdString()+formatDutyTime();
+        return formattedDate.toStdString()+formatDutyTimePeriod();
     }
+
 private:
     int id;
     int doctorId;
-    int dutyTime;
+    int dutyTimePeriod;
     long long dutyDate;
+    int capacityEachPeriod;
 };
 
 #endif // DUTY_H

@@ -36,6 +36,9 @@ public:
     vector<Appointment> getAllAppointmentsByNameAndTelephone(string name,string telephone);
 
     int getUniqueId();
+
+    int getCountByDutyId(int id);
+    int getCountByIdAndTimePeriod(int id,int timePeriod);
 };
 
 #endif
