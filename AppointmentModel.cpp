@@ -4,6 +4,7 @@
 #include "DepartmentService.h"
 #include "DutyService.h"
 #include "DoctorService.h"
+#include "UserService.h"
 
 AppointmentModel::AppointmentModel(vector<Appointment> appointments,QObject *parent):
 QAbstractTableModel(parent),
@@ -43,19 +44,20 @@ QVariant AppointmentModel::data(const QModelIndex &index, int role) const{
     Duty duty=dutyService.getDuty(appointment.getDutyId());
     Doctor doctor=DoctorService().getDoctor(duty.getDoctorId());
     Department department=DepartmentService().getDepartment(doctor.getDepartmentId());
+    User user=UserService().getUser(appointment.getUsername());
     switch(column){
     case 0:
         return QVariant(appointment.getId());
     case 1:
-        return QVariant(appointment.getName().c_str());
+        return QVariant(user.getName().c_str());
     case 2:
-        return QVariant(appointment.getGender()==Appointment::GENDER_MALE?"男":"女");
+        return QVariant(user.getGender()==User::GENDER_MALE?"男":"女");
     case 3:
-        return QVariant(appointment.getAge());
+        return QVariant(user.getAge());
     case 4:
         return (duty.formatDutyDateAndTimePeriod()+" "+appointment.formatTimePeriod()).c_str();
     case 5:
-        return QVariant(appointment.getTelephone().c_str());
+        return QVariant(user.getTelephone().c_str());
     case 6:
         return department.getName().c_str();
     case 7:

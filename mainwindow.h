@@ -17,6 +17,11 @@
 #include "DoctorModel.h"
 #include "DoctorDelegate.h"
 
+#include "UserModel.h"
+#include "UserDelegate.h"
+
+#include "TableDutyModel.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -30,8 +35,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_actionOpen_triggered();
-
     void on_dataTable_doubleClicked(const QModelIndex &index);
 
     void dataTable_customContextMenuRequested(QPoint pos);
@@ -41,10 +44,8 @@ private slots:
     void dataTable_delete_triggered();
 
     void dataTable_appointments_triggered();
-    void on_actionSave_triggered();
 
     void on_actionAdd_triggered();
-    void on_actionRegistration_triggered();
 
     void on_actionduties_triggered();
 
@@ -56,6 +57,10 @@ private slots:
 
     void on_actionaddDuty_triggered();
 
+    void on_actionUsers_triggered();
+
+    void on_actionAddUser_triggered();
+
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
 
@@ -65,12 +70,14 @@ private:
     Ui::MainWindow *ui;
 
     DepartmentModel* model;
-    DutyModel* dutyModel=NULL;
+    TableDutyModel* dutyModel=NULL;
     DoctorModel* doctorModel=NULL;
+    UserModel* userModel=NULL;
 
     DepartmentDelegate* delegate=new DepartmentDelegate();
     DutyDelegate* dutyDelegate=new DutyDelegate();
     DoctorDelegate* doctorDelegate=new DoctorDelegate();
+    UserDelegate* userDelegate=new UserDelegate();
 
     DepartmentService departmentService;
 
@@ -80,6 +87,7 @@ private:
     QAction* appointmentsAction;
 
     int contextMenuSelectedIndex=-1;
+    int selectedColumn=-1;
 
     void showEditDepartmentDialog(int id);
 
@@ -91,6 +99,7 @@ private:
 
     static const int MODE_DEPARTMENT=0;
     static const int MODE_DUTY=1;
-    static const int MDOE_DOCTOR=2;
+    static const int MODE_DOCTOR=2;
+    static const int MODE_USER=3;
 };
 #endif // MAINWINDOW_H

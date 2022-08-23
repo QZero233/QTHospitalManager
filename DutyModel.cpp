@@ -33,6 +33,11 @@ void DutyModel::sortByStatus(){
     }
 }
 
+void DutyModel::setTimeFixed(int timePeriod){
+    timeFixed=true;
+    this->timePeriod=timePeriod;
+}
+
 int DutyModel::rowCount(const QModelIndex &parent) const{
     return duties.size();
 }
@@ -62,8 +67,17 @@ QVariant DutyModel::data(const QModelIndex &index, int role) const{
 
     DutyService service;
     AppointmentService appointmentService;
-    int capacity=service.getCapacityById(duty.getId());
-    int current=appointmentService.getCountByDutyId(duty.getId());
+
+    int capacity;
+    int current;
+    if(!timeFixed){
+        capacity=service.getCapacityById(duty.getId());
+        current=appointmentService.getCountByDutyId(duty.getId());
+    }else{
+        capacity=duty.getCapacityEachPeriod();
+        current=appointmentService.getCountByIdAndTimePeriod(duty.getId(),timePeriod);
+    }
+
     bool occupied=capacity-current<=0;
     switch(column){
     case 0:

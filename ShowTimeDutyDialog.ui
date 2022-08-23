@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ShowAppointmentsDialog</class>
- <widget class="QDialog" name="ShowAppointmentsDialog">
+ <class>ShowTimeDutyDialog</class>
+ <widget class="QDialog" name="ShowTimeDutyDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>827</width>
-    <height>332</height>
+    <width>564</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>预约信息</string>
+   <string>Dialog</string>
   </property>
   <widget class="QTableView" name="dataTable">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>30</y>
-     <width>461</width>
-     <height>261</height>
+     <x>90</x>
+     <y>60</y>
+     <width>256</width>
+     <height>192</height>
     </rect>
    </property>
   </widget>

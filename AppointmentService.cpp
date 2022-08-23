@@ -2,6 +2,9 @@
 #include <stdexcept>
 #include <QDateTime>
 
+
+#include "User.h"
+
 using namespace std;
 
 AppointmentService::AppointmentService() {
@@ -9,14 +12,8 @@ AppointmentService::AppointmentService() {
 }
 
 void AppointmentService::checkAppointmentData(const Appointment& appointment) throw(invalid_argument){
-    if (appointment.getGender() != Appointment::GENDER_MALE &&
-            appointment.getGender() != Appointment::GENDER_FEMALE) {
-        throw invalid_argument("Gender must be 0 or 1");
-    }
-
-    if (appointment.getAge() <= 0) {
-        throw invalid_argument("Age must be greater than 0");
-    }
+    if(!userDao.existByUsername(appointment.getUsername()))
+        throw invalid_argument("不存在用户名为"+appointment.getUsername()+"的用户");
 }
 
 
@@ -32,8 +29,7 @@ throw(invalid_argument,runtime_error){
     int appointmentsCountInPeriod=getCountByIdAndTimePeriod(appointment.getDutyId(),
                                                appointment.getTimePeriod());
     Duty duty=dutyDao.getDuty(appointment.getDutyId());
-    int capacity=duty.getCapacityEachPeriod()*
-            Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod()).size();
+    int capacity=duty.getCapacityEachPeriod();
 
     if(capacity<=appointmentsCountInPeriod)
         throw runtime_error("该时段已被预约满，无法进行预约");
@@ -53,9 +49,6 @@ vector<Appointment> AppointmentService::getAllAppointments(){
     return dao.getAllAppointments();
 }
 
-vector<Appointment> AppointmentService::getAllAppointmentsByTelephone(string telephone){
-    return dao.getAllAppointmentsByTelephone(telephone);
-}
 
 vector<Appointment> AppointmentService::getAllAppointmentsByDepartmentId(int departmentId){
     vector<Appointment> appointments=dao.getAllAppointments();
@@ -76,7 +69,16 @@ bool AppointmentService::existByDutyId(int dutyId){
 }
 
 vector<Appointment> AppointmentService::getAllAppointmentsByNameAndTelephone(string name,string telephone){
-    return dao.getAllAppointmentsByNameAndTelephone(name,telephone);
+    vector<Appointment> result;
+    vector<Appointment> appointments=dao.getAllAppointments();
+
+    for(Appointment appointment:appointments){
+        User user=userDao.getUser(appointment.getUsername());
+        if(user.getName()==name && user.getTelephone()==telephone)
+            result.push_back(appointment);
+    }
+
+    return result;
 }
 
 int AppointmentService::getUniqueId(){
@@ -110,6 +112,18 @@ int AppointmentService::getCountByIdAndTimePeriod(int id,int timePeriod){
         if(appointments[i].getDutyId()==id && appointments[i].getTimePeriod()==timePeriod){
             result++;
         }
+    }
+
+    return result;
+}
+
+vector<Appointment> AppointmentService::getAllByUsername(string username){
+    vector<Appointment> result;
+    vector<Appointment> appointments=dao.getAllAppointments();
+
+    for(Appointment appointment:appointments){
+        if(appointment.getUsername()==username)
+            result.push_back(appointment);
     }
 
     return result;

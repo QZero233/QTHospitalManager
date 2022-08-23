@@ -15,8 +15,8 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
-    void addDuty(const Duty& duty);
-    void deleteDuty(int index);
+    virtual void addDuty(const Duty& duty);
+    virtual void deleteDuty(int index);
 
     vector<Duty> getDuties();
     Duty getDutyByIndex(int index);
@@ -26,9 +26,14 @@ public:
     void setDutiesAndReload(const vector<Duty>& duties);
 
     void sortByStatus();
-private:
+
+    void setTimeFixed(int timePeriod);
+protected:
     vector<Duty> duties;
 
     DutyService service;
+
+    bool timeFixed=false;
+    int timePeriod=-1;
 };
 #endif // DUTYMODEL_H

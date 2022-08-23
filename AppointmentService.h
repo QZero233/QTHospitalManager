@@ -7,6 +7,7 @@
 #include "DepartmentDao.h"
 #include "DutyDao.h"
 #include "DoctorDao.h"
+#include "UserDao.h"
 #include <vector>
 
 using namespace std;
@@ -17,6 +18,7 @@ private:
     DepartmentDao departmentDao;
     DutyDao dutyDao;
     DoctorDao doctorDao;
+    UserDao userDao;
 
 public:
 	AppointmentService();
@@ -30,10 +32,10 @@ public:
     bool existByDutyId(int dutyId);
 
     vector<Appointment> getAllAppointmentsByDepartmentId(int departmentId);
-    vector<Appointment> getAllAppointmentsByTelephone(string telephone);
     vector<Appointment> getAllAppointments();
 
     vector<Appointment> getAllAppointmentsByNameAndTelephone(string name,string telephone);
+    vector<Appointment> getAllByUsername(string username);
 
     int getUniqueId();
 

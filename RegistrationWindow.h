@@ -15,7 +15,7 @@ class RegistrationWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit RegistrationWindow(QWidget *parent = nullptr);
+    explicit RegistrationWindow(User user,QWidget *parent = nullptr);
     ~RegistrationWindow();
 
 private slots:
@@ -34,6 +34,8 @@ private:
     Ui::RegistrationWindow *ui;
 
     DepartmentModel* model;
+
+    User currentUser;
 };
 
 #endif // REGISTRATIONWINDOW_H

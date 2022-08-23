@@ -7,14 +7,12 @@
 
 #include <QMessageBox>
 
-AddAppointmentDialog::AddAppointmentDialog(QWidget *parent) :
+AddAppointmentDialog::AddAppointmentDialog(User user,QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AddAppointmentDialog)
+    ui(new Ui::AddAppointmentDialog),
+    user(user)
 {
     ui->setupUi(this);
-
-    ui->comboBox_gender->addItem("男");
-    ui->comboBox_gender->addItem("女");
 }
 
 
@@ -78,13 +76,14 @@ Appointment AddAppointmentDialog::getInputAppointment(){
     AppointmentService service;
     Appointment appointment;
     appointment.setId(service.getUniqueId());
-    appointment.setName(ui->lineEdit_name->text().toStdString());
-    appointment.setTelephone(ui->lineEdit_tel->text().toStdString());
-    appointment.setAge(ui->spinBox_age->value());
     appointment.setDutyId(dutyId);
-    appointment.setGender(ui->comboBox_gender->currentIndex()==0?
-                              Appointment::GENDER_MALE:Appointment::GENDER_FEMALE);
-    appointment.setTimePeriod(timePeriods[ui->comboBox_time_period->currentIndex()]);
+    appointment.setUsername(user.getUsername());
+
+    if(timePeriod==-1)
+        appointment.setTimePeriod(timePeriods[ui->comboBox_time_period->currentIndex()]);
+    else
+        appointment.setTimePeriod(timePeriod);
+
     return appointment;
 }
 
@@ -95,4 +94,10 @@ void AddAppointmentDialog::on_comboBox_time_period_activated(int index)
             //QMessageBox::critical(this,"错误","请注意，此时段预约已满");
         }
     }
+}
+
+void AddAppointmentDialog::setTimePeriod(int timePeriod){
+    this->timePeriod=timePeriod;
+    ui->comboBox_time_period->setVisible(false);
+    ui->label_period->setText(QString("预约时间：")+Appointment::toStringPeriod(timePeriod).c_str());
 }

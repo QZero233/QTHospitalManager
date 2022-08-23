@@ -6,6 +6,7 @@
 #include "Department.h"
 #include "Doctor.h"
 #include "Duty.h"
+#include "User.h"
 #include <vector>
 
 using namespace std;
@@ -17,8 +18,7 @@ private:
     vector<Appointment> appointments;
     vector<Doctor> doctors;
     vector<Duty> duties;
-
-    string password="123456";
+    vector<User> users;
 
 	string storageFileName;
 
@@ -45,13 +45,10 @@ public:
         return &duties;
     }
 
-    string getPassword(){
-        return password;
+    vector<User>* getUsersPtr(){
+        return &users;
     }
 
-    void setPassword(string password){
-        this->password=password;
-    }
 };
 
 

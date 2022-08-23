@@ -12,14 +12,16 @@
 #include "ShowDepartmentDutiesDialog.h"
 #include "QueryAppointmentDialog.h"
 #include "ShowAppointmentsDialog.h"
+#include "ShowTimeDutyDialog.h"
 
 #include "SelectDutyDialog.h"
 
 #include <QCloseEvent>
 
-RegistrationWindow::RegistrationWindow(QWidget *parent) :
+RegistrationWindow::RegistrationWindow(User user,QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::RegistrationWindow)
+    ui(new Ui::RegistrationWindow),
+    currentUser(user)
 {
     ui->setupUi(this);
 
@@ -50,7 +52,7 @@ void RegistrationWindow::on_actionSelect_triggered()
 {
     SelectDutyDialog dialog;
     if(dialog.exec()==QDialog::Accepted){
-        ShowDepartmentDutiesDialog d(dialog.getSatsfitedDuties());
+        ShowDepartmentDutiesDialog d(-1,currentUser,dialog.getSatsfitedDuties());
         d.exec();
     }
 }
@@ -61,24 +63,19 @@ void RegistrationWindow::on_dataTable_doubleClicked(const QModelIndex &index)
         return;
     //Double click to department duties
     Department department=model->getDepartmentByIndex(index.row());
-    ShowDepartmentDutiesDialog dialog(DutyService()
+    ShowTimeDutyDialog dialog(currentUser,DutyService()
                                       .getAllByDepartmentId(department.getId()));
     dialog.exec();
 }
 
 void RegistrationWindow::on_actionQueryAppointment_triggered()
 {
-    QueryAppointmentDialog dialog;
-    if(dialog.exec()==QDialog::Accepted){
-        vector<Appointment> appointments=dialog.getSatisfiedAppointments();
-        if(appointments.size()==0){
-            QMessageBox::critical(this,"错误","找不到符合条件的预约");
-            return;
-        }
-        ShowAppointmentsDialog d(appointments);
-        d.setAllowDelete();
-        d.exec();
-    }
+    vector<Appointment> appointments=AppointmentService()
+            .getAllByUsername(currentUser.getUsername());
+
+    ShowAppointmentsDialog d(appointments);
+    d.setAllowDelete();
+    d.exec();
 }
 
 void RegistrationWindow::closeEvent(QCloseEvent* event){

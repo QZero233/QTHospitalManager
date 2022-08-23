@@ -7,6 +7,9 @@
 #include <QMessageBox>
 #include "AppointmentService.h"
 
+#include "UserService.h"
+#include "AddUserDialog.h"
+
 void addTestData();
 
 LoginWindow::LoginWindow(QWidget *parent) :
@@ -21,10 +24,7 @@ LoginWindow::LoginWindow(QWidget *parent) :
     DataSource* dataSource=DataSource::getInstance();
     dataSource->setStorageFilePath("record.txt");
     dataSource->loadFromFile();
-    //addTestData();
-
-    ui->label->setVisible(admin);
-    ui->lineEdit_pwd->setVisible(admin);
+    //addTestData();//TODO load from file
 }
 
 LoginWindow::~LoginWindow()
@@ -64,38 +64,53 @@ void addTestData(){
     dutyService.addDuty(Duty(5,5,Duty::TIME_PERIOD_AM,today,capacity));
     dutyService.addDuty(Duty(6,6,Duty::TIME_PERIOD_PM,today,capacity));
 
+    //Add 2 users
+    UserService userService;
+    userService.addUser(User("a","",User::GROUP_ADMIN,"Admin","AdminTel",User::GENDER_MALE,18));
+    userService.addUser(User("p","",User::GROUP_PATIENT,"Patient","114514",User::GENDER_MALE,18));
+
     //Add 10 appointments
     AppointmentService appointmentService;
-    appointmentService.addAppointment(Appointment(1,"预约1","电话1",0,18,2,TIME_PERIOD_AM_1));
-    appointmentService.addAppointment(Appointment(2,"预约2","电话2",1,18,5,TIME_PERIOD_AM_1));
+    appointmentService.addAppointment(Appointment(1,"p",1,1));
+    //appointmentService.addAppointment(Appointment(2,"预约2","电话2",1,18,5,TIME_PERIOD_AM_1));
 }
 
 void LoginWindow::on_pushButton_clicked()
 {
-    if(admin){
-        //Admin
-        if(ui->lineEdit_pwd->text()==""){
-            //QMessageBox::information(this,"成功","欢迎登陆");
+    string username=ui->lineEdit_username->text().toStdString();
+    string password=ui->lineEdit_pwd->text().toStdString();
+    UserService service;
+    if(!service.existByUsernameAndPassword(username,password)){
+        QMessageBox::critical(this,"错误","用户名或密码错误");
+        return;
+    }
 
-            MainWindow* win=new MainWindow;
-            win->show();
-            close();
-        }else{
-            QMessageBox::critical(this,"错误","密码错误");
-        }
+    User user=service.getByUsernameAndPassword(username,password);
+    if(user.getGroup()==User::GROUP_ADMIN){
+        //Go to admin
+        MainWindow* win=new MainWindow;
+        win->show();
+        close();
     }else{
-        //Patient
-        //QMessageBox::information(this,"成功","欢迎登陆");
-
-        RegistrationWindow* win=new RegistrationWindow;
+        //Go to patient
+        RegistrationWindow* win=new RegistrationWindow(user);
         win->show();
         close();
     }
 }
 
-void LoginWindow::on_radioButton_patient_toggled(bool checked)
+
+void LoginWindow::on_pushButton_reg_clicked()
 {
-    admin=!checked;
-    ui->label->setVisible(admin);
-    ui->lineEdit_pwd->setVisible(admin);
+    AddUserDialog dialog(false);
+
+    if(dialog.exec()==QDialog::Accepted){
+        //Add user
+        try{
+            UserService().addUser(dialog.getInputUser());
+            QMessageBox::information(this,"成功","注册成功");
+        }catch(exception& e){
+            QMessageBox::critical(this,"失败",e.what());
+        }
+    }
 }

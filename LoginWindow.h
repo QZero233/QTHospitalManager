@@ -18,12 +18,11 @@ public:
 private slots:
     void on_pushButton_clicked();
 
-    void on_radioButton_patient_toggled(bool checked);
+    void on_pushButton_reg_clicked();
 
 private:
     Ui::LoginWindow *ui;
 
-    bool admin=false;
 };
 
 #endif // LOGINWINDOW_H

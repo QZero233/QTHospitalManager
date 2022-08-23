@@ -11,5 +11,6 @@
         <file>imgs/query.png</file>
         <file>imgs/show_all.png</file>
         <file>imgs/select.png</file>
+        <file>imgs/user.png</file>
     </qresource>
 </RCC>

@@ -12,6 +12,7 @@ SOURCES += \
     AddAppointmentDialog.cpp \
     AddDoctorDialog.cpp \
     AddDutyDialog.cpp \
+    AddUserDialog.cpp \
     AppointmentDao.cpp \
     AppointmentEditDelegate.cpp \
     AppointmentModel.cpp \
@@ -40,7 +41,16 @@ SOURCES += \
     SelectDutyDialog.cpp \
     ShowAppointmentsDialog.cpp \
     ShowDepartmentDutiesDialog.cpp \
+    ShowTimeDutyDialog.cpp \
+    TableDutyModel.cpp \
+    TimeDutyDelegate.cpp \
+    TimeDutyModel.cpp \
     TimeUtils.cpp \
+    User.cpp \
+    UserDao.cpp \
+    UserDelegate.cpp \
+    UserModel.cpp \
+    UserService.cpp \
     departmenteditdialog.cpp \
     main.cpp \
     mainwindow.cpp
@@ -49,6 +59,7 @@ HEADERS += \
     AddAppointmentDialog.h \
     AddDoctorDialog.h \
     AddDutyDialog.h \
+    AddUserDialog.h \
     Appointment.h \
     AppointmentDao.h \
     AppointmentEditDelegate.h \
@@ -79,7 +90,16 @@ HEADERS += \
     SelectDutyDialog.h \
     ShowAppointmentsDialog.h \
     ShowDepartmentDutiesDialog.h \
+    ShowTimeDutyDialog.h \
+    TableDutyModel.h \
+    TimeDutyDelegate.h \
+    TimeDutyModel.h \
     TimeUtils.h \
+    User.h \
+    UserDao.h \
+    UserDelegate.h \
+    UserModel.h \
+    UserService.h \
     departmenteditdialog.h \
     mainwindow.h
 
@@ -87,6 +107,7 @@ FORMS += \
     AddAppointmentDialog.ui \
     AddDoctorDialog.ui \
     AddDutyDialog.ui \
+    AddUserDialog.ui \
     InputPasswordDialog.ui \
     InputTelDialog.ui \
     LoginWindow.ui \
@@ -95,6 +116,7 @@ FORMS += \
     SelectDutyDialog.ui \
     ShowAppointmentsDialog.ui \
     ShowDepartmentDutiesDialog.ui \
+    ShowTimeDutyDialog.ui \
     departmenteditdialog.ui \
     mainwindow.ui
 

@@ -5,6 +5,7 @@
 
 #include "Duty.h"
 #include "Appointment.h"
+#include "User.h"
 
 namespace Ui {
 class AddAppointmentDialog;
@@ -15,10 +16,11 @@ class AddAppointmentDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddAppointmentDialog(QWidget *parent = nullptr);
+    explicit AddAppointmentDialog(User user,QWidget *parent = nullptr);
     ~AddAppointmentDialog();
 
     void setDuty(Duty duty);
+    void setTimePeriod(int timePeriod);
     Appointment getInputAppointment();
 
 private slots:
@@ -32,6 +34,10 @@ private:
     vector<int> timePeriods;
 
     vector<int> fullIndexes;
+
+    User user;
+
+    int timePeriod=-1;
 };
 
 #endif // ADDAPPOINTMENTDIALOG_H

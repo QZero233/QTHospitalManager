@@ -18,9 +18,6 @@ public:
     Appointment getAppointment(int id);
 
     vector<Appointment> getAllAppointments();
-    vector<Appointment> getAllAppointmentsByTelephone(string telephone);
-
-    vector<Appointment> getAllAppointmentsByNameAndTelephone(string name,string telephone);
 
     bool existByDutyId(int dutyId);
 

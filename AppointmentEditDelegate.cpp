@@ -56,7 +56,7 @@ void AppointmentEditDelegate::setEditorData(QWidget *editor, const QModelIndex &
     case 2://Gender
     {
         QComboBox* box=(QComboBox*)editor;
-        if(data.toInt()==Appointment::GENDER_MALE){
+        if(data.toInt()==User::GENDER_MALE){
             box->setCurrentIndex(0);
         }else{
             box->setCurrentIndex(1);
@@ -97,9 +97,9 @@ void AppointmentEditDelegate::setModelData(QWidget *editor, QAbstractItemModel *
         case 2://Gender
         {
             QComboBox* box=(QComboBox*)editor;
-            int gender=Appointment::GENDER_MALE;
+            int gender=User::GENDER_MALE;
             if(box->currentIndex()==1){
-                gender=Appointment::GENDER_FEMALE;
+                gender=User::GENDER_FEMALE;
             }
             model->setData(index,gender);
         }

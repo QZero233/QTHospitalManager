@@ -19,32 +19,21 @@ using namespace std;
 class Appointment{
 private:
 	int id;
-	string name;
-	string telephone;
-	int gender;
-	int age;
+    string username;
     int dutyId;
     int timePeriod;
 
 public:
-	static const int GENDER_FEMALE = 0;
-	static const int GENDER_MALE = 1;
 
     Appointment():
         id(-1),
-        name(""),
-        telephone(""),
-        gender(-1),
-        age(-1),
+        username(""),
         dutyId(-1),
         timePeriod(-1){}
 
-    Appointment(int id,string name,string telephone,int gender,int age,int dutyId,int timePeriod):
+    Appointment(int id,string username,int dutyId,int timePeriod):
         id(id),
-        name(name),
-        telephone(telephone),
-        gender(gender),
-        age(age),
+        username(username),
         dutyId(dutyId),
         timePeriod(timePeriod){}
 
@@ -56,37 +45,13 @@ public:
 		return id;
 	}
 
-	void setName(const string& name) {
-		this->name = name;
-	}
+    void setUsername(string username){
+        this->username=username;
+    }
 
-	string getName() const {
-		return name;
-	}
-
-	void setTelephone(const string& telephone) {
-		this->telephone = telephone;
-	}
-
-	string getTelephone() const {
-		return telephone;
-	}
-
-	void setGender(int gender) {
-		this->gender = gender;
-	}
-
-	int getGender() const {
-		return gender;
-	}
-
-	void setAge(int age) {
-		this->age = age;
-	}
-
-	int getAge() const {
-		return age;
-	}
+    string getUsername() const{
+        return username;
+    }
 
     void setDutyId(int dutyId){
         this->dutyId=dutyId;

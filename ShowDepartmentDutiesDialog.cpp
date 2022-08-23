@@ -7,9 +7,11 @@
 
 #include <QMessageBox>
 
-ShowDepartmentDutiesDialog::ShowDepartmentDutiesDialog(vector<Duty> duties,QWidget *parent) :
+ShowDepartmentDutiesDialog::ShowDepartmentDutiesDialog(int timePeriod,User user,vector<Duty> duties,QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ShowDepartmentDutiesDialog)
+    ui(new Ui::ShowDepartmentDutiesDialog),
+    user(user),
+    timePeriod(timePeriod)
 {
     ui->setupUi(this);
 
@@ -19,6 +21,15 @@ ShowDepartmentDutiesDialog::ShowDepartmentDutiesDialog(vector<Duty> duties,QWidg
     ui->dataTable->setItemDelegate(new DutyDelegate());
 
     ui->dataTable->setColumnWidth(2,120);
+
+    if(timePeriod==-1)
+        timeFixed=false;
+    else
+        timeFixed=true;
+
+    if(timeFixed){
+        model->setTimeFixed(timePeriod);
+    }
 }
 
 ShowDepartmentDutiesDialog::~ShowDepartmentDutiesDialog()
@@ -50,11 +61,14 @@ void ShowDepartmentDutiesDialog::on_dataTable_doubleClicked(const QModelIndex &i
         return;
     }
 
-    AddAppointmentDialog dialog;
+    AddAppointmentDialog dialog(user);
     dialog.setDuty(duty);
+    if(timeFixed)
+    dialog.setTimePeriod(timePeriod);
     if(dialog.exec()==QDialog::Accepted){
         try{
             AppointmentService().addAppointment(dialog.getInputAppointment());
+            close();
         }catch(exception& e){
             QMessageBox::critical(this,"错误",e.what());
         }

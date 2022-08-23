@@ -29,6 +29,7 @@
 
 #include "AddDoctorDialog.h"
 #include "AddDutyDialog.h"
+#include "AddUserDialog.h"
 
 using namespace std;
 
@@ -43,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     //Set table not editable
     ui->dataTable->setItemDelegate(delegate);
+
+    ui->dataTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     //Add right-click menu
     tableMenu=new QMenu(ui->dataTable);
@@ -59,19 +62,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(deleteAction,SIGNAL(triggered()),this,SLOT(dataTable_delete_triggered()));
     connect(appointmentsAction,SIGNAL(triggered()),this,SLOT(dataTable_appointments_triggered()));
 
-    //Disable some menus before opening
-    ui->actionSave->setVisible(false);
-    ui->actionAdd->setVisible(false);
-    ui->actionRegistration->setVisible(false);
+    model=new DepartmentModel(departmentService.getAllDepartments());
+    ui->dataTable->setModel(model);
 
-    ui->actionAdd->setVisible(false);
-    ui->actionaddDoctor->setVisible(false);
-    ui->actionaddDuty->setVisible(false);
-    ui->actiondepartments->setVisible(false);
-    ui->actiondoctors->setVisible(false);
-    ui->actionduties->setVisible(false);
-
-    on_actionOpen_triggered();
+    controlMenuVisibilityByMode();
 }
 
 MainWindow::~MainWindow()
@@ -92,6 +86,7 @@ void MainWindow::dataTable_customContextMenuRequested(QPoint pos){
         }
 
         contextMenuSelectedIndex=index.row();
+        selectedColumn=index.column();
 
 
         tableMenu->exec(QCursor::pos());
@@ -124,7 +119,7 @@ void MainWindow::dataTable_delete_triggered(){
                 QMessageBox::critical(this,"删除失败",e.what());
             }
         }
-    }else if(mode==MDOE_DOCTOR){
+    }else if(mode==MODE_DOCTOR){
         //Show confirm dialog
         Doctor doctor=doctorModel->getDoctorByIndex(contextMenuSelectedIndex);
 
@@ -153,7 +148,25 @@ void MainWindow::dataTable_delete_triggered(){
         if(ret==QMessageBox::Ok){
             //Delete
             try{
-                dutyModel->deleteDuty(contextMenuSelectedIndex);
+                dutyModel->deleteDuty(contextMenuSelectedIndex,selectedColumn);
+            }catch(exception& e){
+                QMessageBox::critical(this,"删除失败",e.what());
+            }
+        }
+    }else if(mode==MODE_USER){
+        //Show confirm dialog
+        User user=userModel->getUserByIndex(contextMenuSelectedIndex);
+
+        QMessageBox box;
+        box.setText(("是否删除用户"+user.getUsername()).c_str());
+        box.setInformativeText("此操作不可逆！");
+        box.setStandardButtons(QMessageBox::Ok|QMessageBox::Cancel);
+        box.setDefaultButton(QMessageBox::Ok);
+        int ret=box.exec();
+        if(ret==QMessageBox::Ok){
+            //Delete
+            try{
+                userModel->deleteUser(contextMenuSelectedIndex);
             }catch(exception& e){
                 QMessageBox::critical(this,"删除失败",e.what());
             }
@@ -193,27 +206,6 @@ void MainWindow::showAppointmentsDialog(int id){
     model->reloadFromDataSource();
 }
 
-
-void MainWindow::on_actionOpen_triggered()
-{
-    model=new DepartmentModel(departmentService.getAllDepartments());
-    ui->dataTable->setModel(model);
-
-    ui->actionOpen->setVisible(false);
-
-    ui->actionSave->setVisible(true);
-    ui->actionAdd->setVisible(true);
-    ui->actionRegistration->setVisible(true);
-
-    ui->actiondepartments->setVisible(true);
-    ui->actiondoctors->setVisible(true);
-    ui->actionduties->setVisible(true);
-
-    controlMenuVisibilityByMode();
-    //ui->dataTable->setColumnWidth(4,120);
-    //ui->dataTable->setColumnWidth(5,100);
-}
-
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
@@ -233,12 +225,6 @@ void MainWindow::on_dataTable_doubleClicked(const QModelIndex &index)
             showEditDepartmentDialog(id);
         }
     }
-}
-
-void MainWindow::on_actionSave_triggered()
-{
-    DataSource* dataSource=DataSource::getInstance();
-    dataSource->saveToFile();
 }
 
 void MainWindow::closeEvent(QCloseEvent* event){
@@ -283,20 +269,13 @@ void MainWindow::on_actionAdd_triggered()
     }
 }
 
-void MainWindow::on_actionRegistration_triggered()
-{
-    RegistrationWindow* win=new RegistrationWindow(this);
-    win->show();
-    this->hide();
-}
-
 void MainWindow::on_actionduties_triggered()
 {
     mode=MODE_DUTY;
     vector<Duty> duties=DutyService().getAllDuties();
 
     if(dutyModel==NULL){
-        dutyModel=new DutyModel(duties);
+        dutyModel=new TableDutyModel(duties,QDate::currentDate(),5);
     }else{
         dutyModel->setDutiesAndReload(duties);
     }
@@ -320,7 +299,7 @@ void MainWindow::on_actiondepartments_triggered()
 
 void MainWindow::on_actiondoctors_triggered()
 {
-    mode=MDOE_DOCTOR;
+    mode=MODE_DOCTOR;
 
     vector<Doctor> doctors=DoctorService().getAllDoctors();
     if(doctorModel==NULL){
@@ -369,16 +348,46 @@ void MainWindow::controlMenuVisibilityByMode(){
     ui->actionAdd->setVisible(false);
     ui->actionaddDoctor->setVisible(false);
     ui->actionaddDuty->setVisible(false);
+    ui->actionAddUser->setVisible(false);
 
     switch(mode){
     case MODE_DEPARTMENT:
         ui->actionAdd->setVisible(true);
         break;
-    case MDOE_DOCTOR:
+    case MODE_DOCTOR:
         ui->actionaddDoctor->setVisible(true);
         break;
     case MODE_DUTY:
         ui->actionaddDuty->setVisible(true);
         break;
+    case MODE_USER:
+        ui->actionAddUser->setVisible(true);
+        break;
+    }
+}
+
+void MainWindow::on_actionUsers_triggered()
+{
+    mode=MODE_USER;
+
+    if(userModel==NULL){
+        userModel=new UserModel(UserService().getAllUsers());
+    }
+
+    ui->dataTable->setModel(userModel);
+    ui->dataTable->setItemDelegate(userDelegate);
+
+    controlMenuVisibilityByMode();
+}
+
+void MainWindow::on_actionAddUser_triggered()
+{
+    AddUserDialog dialog(true);
+    if(dialog.exec()==QDialog::Accepted){
+        try {
+            userModel->addUser(dialog.getInputUser());
+        }  catch (exception& e) {
+            QMessageBox::critical(this,"错误",e.what());
+        }
     }
 }

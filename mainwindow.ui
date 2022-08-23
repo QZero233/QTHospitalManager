@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>685</width>
+    <width>843</width>
     <height>431</height>
    </rect>
   </property>
@@ -30,7 +30,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>685</width>
+     <width>843</width>
      <height>21</height>
     </rect>
    </property>
@@ -41,6 +41,7 @@
     <addaction name="actionAdd"/>
     <addaction name="actionaddDoctor"/>
     <addaction name="actionaddDuty"/>
+    <addaction name="actionAddUser"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
@@ -49,6 +50,7 @@
     <addaction name="actiondepartments"/>
     <addaction name="actiondoctors"/>
     <addaction name="actionduties"/>
+    <addaction name="actionUsers"/>
    </widget>
    <addaction name="menu_2"/>
    <addaction name="menu_3"/>
@@ -67,35 +69,13 @@
    <addaction name="actionAdd"/>
    <addaction name="actionaddDoctor"/>
    <addaction name="actionaddDuty"/>
+   <addaction name="actionAddUser"/>
    <addaction name="separator"/>
    <addaction name="actiondepartments"/>
    <addaction name="actiondoctors"/>
    <addaction name="actionduties"/>
+   <addaction name="actionUsers"/>
   </widget>
-  <action name="actionOpen">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icon/imgs/open.png</normaloff>:/icon/imgs/open.png</iconset>
-   </property>
-   <property name="text">
-    <string>打开</string>
-   </property>
-   <property name="visible">
-    <bool>true</bool>
-   </property>
-  </action>
-  <action name="actionSave">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icon/imgs/save.png</normaloff>:/icon/imgs/save.png</iconset>
-   </property>
-   <property name="text">
-    <string>保存</string>
-   </property>
-   <property name="visible">
-    <bool>true</bool>
-   </property>
-  </action>
   <action name="actionAdd">
    <property name="icon">
     <iconset resource="icons.qrc">
@@ -106,18 +86,6 @@
    </property>
    <property name="toolTip">
     <string>添加科</string>
-   </property>
-  </action>
-  <action name="actionRegistration">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icon/imgs/registration.png</normaloff>:/icon/imgs/registration.png</iconset>
-   </property>
-   <property name="text">
-    <string>挂号</string>
-   </property>
-   <property name="toolTip">
-    <string>挂号</string>
    </property>
   </action>
   <action name="actiondoctors">
@@ -178,6 +146,30 @@
    </property>
    <property name="toolTip">
     <string>添加医生</string>
+   </property>
+  </action>
+  <action name="actionUsers">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/imgs/user.png</normaloff>:/icon/imgs/user.png</iconset>
+   </property>
+   <property name="text">
+    <string>用户信息</string>
+   </property>
+   <property name="toolTip">
+    <string>用户信息</string>
+   </property>
+  </action>
+  <action name="actionAddUser">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/imgs/add.png</normaloff>:/icon/imgs/add.png</iconset>
+   </property>
+   <property name="text">
+    <string>添加用户</string>
+   </property>
+   <property name="toolTip">
+    <string>添加用户</string>
    </property>
   </action>
  </widget>

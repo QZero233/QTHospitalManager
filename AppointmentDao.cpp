@@ -52,16 +52,6 @@ vector<Appointment> AppointmentDao::getAllAppointments(){
     return *appointmentsPtr;
 }
 
-vector<Appointment> AppointmentDao::getAllAppointmentsByTelephone(string telephone){
-    vector<Appointment> result;
-    for(int i=0;i<appointmentsPtr->size();i++){
-        if(appointmentsPtr->at(i).getTelephone()==telephone)
-            result.push_back(appointmentsPtr->at(i));
-    }
-
-    return result;
-}
-
 bool AppointmentDao::existByDutyId(int dutyId){
     for(int i=0;i<appointmentsPtr->size();i++){
         if(appointmentsPtr->at(i).getDutyId()==dutyId)
@@ -69,16 +59,5 @@ bool AppointmentDao::existByDutyId(int dutyId){
     }
 
     return false;
-}
-
-vector<Appointment> AppointmentDao::getAllAppointmentsByNameAndTelephone(string name,string telephone){
-    vector<Appointment> result;
-    for(int i=0;i<appointmentsPtr->size();i++){
-        Appointment tmp=appointmentsPtr->at(i);
-        if(tmp.getName()==name && tmp.getTelephone()==telephone )
-            result.push_back(tmp);
-    }
-
-    return result;
 }
 

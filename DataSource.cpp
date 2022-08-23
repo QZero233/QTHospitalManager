@@ -17,6 +17,7 @@ void DataSource::setStorageFilePath(const string& fileName) {
 	storageFileName = fileName;
 }
 
+
 void DataSource::loadFromFile() {
     fstream fs(storageFileName,ios::in);
     //Departments first
@@ -48,10 +49,7 @@ void DataSource::loadFromFile() {
 
     /*
      * int id;
-    string name;
-    string telephone;
-    int gender;
-    int age;
+    string username;
     int dutyId;
     int timePeriod;
     */
@@ -61,21 +59,15 @@ void DataSource::loadFromFile() {
         if(id==-1)
             break;
 
-        string name;
-        string telephone;
-        int gender;
-        int age;
+        string username;
         int dutyId;
         int timePeriod;
 
-        fs>>name>>telephone>>gender>>age>>dutyId>>timePeriod;
+        fs>>username>>dutyId>>timePeriod;
 
         Appointment appointment;
         appointment.setId(id);
-        appointment.setName(name);
-        appointment.setTelephone(telephone);
-        appointment.setAge(age);
-        appointment.setGender(gender);
+        appointment.setUsername(username);
         appointment.setDutyId(dutyId);
         appointment.setTimePeriod(timePeriod);
 
@@ -128,6 +120,37 @@ void DataSource::loadFromFile() {
         duties.push_back(Duty(id,doctorId,dutyTimePeriod,dutyDate,capacityEachPeriod));
     }
 
+    //User
+    /*
+     * string username;
+    string password;
+    int group;
+
+    string name;
+    string telephone;
+    int gender;
+    int age;
+     */
+
+    //Count first
+    int count;
+    fs>>count;
+    for(int i=0;i<count;i++){
+        string username;
+        string password;
+        int group;
+
+        string name;
+        string telephone;
+        int gender;
+        int age;
+
+        fs>>username;
+        fs>>password;
+        fs>>group>>name>>telephone>>gender>>age;
+        users.push_back(User(username,password,group,name,telephone,gender,age));
+    }
+
     fs.close();
 }
 
@@ -151,19 +174,13 @@ void DataSource::saveToFile() {
     //Then appointments
     /*
      * int id;
-    string name;
-    string telephone;
-    int gender;
-    int age;
+    string username;
     int dutyId;
     int timePeriod;
     */
     for(Appointment appointment:appointments){
         fs<<appointment.getId()<<endl
-         <<appointment.getName()<<endl
-        <<appointment.getTelephone()<<endl
-        <<appointment.getGender()<<endl
-        <<appointment.getAge()<<endl
+         <<appointment.getUsername()<<endl
         <<appointment.getDutyId()<<endl
         <<appointment.getTimePeriod()<<endl;
     }
@@ -200,6 +217,29 @@ void DataSource::saveToFile() {
         <<duty.getCapacityEachPeriod()<<endl;
     }
     fs<<-1<<endl;
+
+    //Then users
+    /*
+     * string username;
+    string password;
+    int group;
+
+    string name;
+    string telephone;
+    int gender;
+    int age;
+     */
+    //Count firsr
+    fs<<users.size()<<endl;
+    for(User user:users){
+        fs<<user.getUsername()<<endl
+         <<(user.getPassword()==""?"empty":user.getPassword())<<endl
+        <<user.getGroup()<<endl
+        <<user.getName()<<endl
+        <<user.getTelephone()<<endl
+        <<user.getGender()<<endl
+        <<user.getAge()<<endl;
+    }
 
     fs.close();
 }

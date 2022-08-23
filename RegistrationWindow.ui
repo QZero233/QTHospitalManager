@@ -81,10 +81,10 @@
      <normaloff>:/icon/imgs/query.png</normaloff>:/icon/imgs/query.png</iconset>
    </property>
    <property name="text">
-    <string>查询预约</string>
+    <string>我的预约</string>
    </property>
    <property name="toolTip">
-    <string>查询预约</string>
+    <string>我的预约</string>
    </property>
   </action>
   <action name="actionShowAll">
