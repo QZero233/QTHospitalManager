@@ -60,6 +60,8 @@ QVariant UserModel::data(const QModelIndex &index, int role) const{
             return user.getGender();
         return user.getGender()==User::GENDER_MALE?"男":"女";
     case 6:
+        if(role==Qt::EditRole)
+            return user.getBirthDate();
         return user.getAge();
     default:
         return QVariant();
@@ -88,7 +90,7 @@ bool UserModel::setData(const QModelIndex &index, const QVariant &value, int rol
         user.setGender(value.toInt());
         break;
     case 6:
-        user.setAge(value.toInt());
+        user.setBirthDate(value.toLongLong());
         break;
     }
 

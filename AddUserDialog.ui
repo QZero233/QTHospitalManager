@@ -154,23 +154,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>年龄</string>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="spinBox_age">
-   <property name="geometry">
-    <rect>
-     <x>70</x>
-     <y>180</y>
-     <width>42</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="minimum">
-    <number>1</number>
-   </property>
-   <property name="maximum">
-    <number>114514</number>
+    <string>生日</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_7">
@@ -194,6 +178,19 @@
      <width>72</width>
      <height>22</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QDateEdit" name="dateEdit_birth">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>180</y>
+     <width>110</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="calendarPopup">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

@@ -8,6 +8,8 @@ AddUserDialog::AddUserDialog(bool adminMode,QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->dateEdit_birth->setDate(QDate::currentDate());
+
     ui->comboBox_group->addItem("管理员");
     ui->comboBox_group->addItem("患者");
 
@@ -36,7 +38,7 @@ User AddUserDialog::getInputUser(){
 
     user.setName(ui->lineEdit_name->text().toStdString());
     user.setTelephone(ui->lineEdit_tel->text().toStdString());
-    user.setAge(ui->spinBox_age->value());
+    user.setBirthDate(ui->dateEdit_birth->date().toJulianDay());
     user.setGender(ui->comboBox_gender->currentIndex()==0?User::GENDER_MALE:User::GENDER_FEMALE);
 
     if(adminMode){

@@ -24,7 +24,7 @@ LoginWindow::LoginWindow(QWidget *parent) :
     DataSource* dataSource=DataSource::getInstance();
     dataSource->setStorageFilePath("record.txt");
     dataSource->loadFromFile();
-    //addTestData();//TODO load from file
+    //addTestData();
 }
 
 LoginWindow::~LoginWindow()

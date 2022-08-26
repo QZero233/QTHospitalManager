@@ -3,6 +3,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QSpinBox>
+#include <QDateEdit>
 
 
 QWidget* UserDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const{
@@ -41,11 +42,9 @@ QWidget* UserDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem 
     }
     case 6:
     {
-        QSpinBox* box=new QSpinBox(parent);
-        box->setMinimum(1);
-        box->setMaximum(114514);
-
-        return box;
+        QDateEdit* edit=new QDateEdit(parent);
+        edit->setCalendarPopup(true);
+        return edit;
     }
     default:
         return NULL;
@@ -83,8 +82,8 @@ void UserDelegate::setEditorData(QWidget *editor, const QModelIndex &index) cons
     case 6:
         //Age
     {
-        QSpinBox* box=(QSpinBox*)editor;
-        box->setValue(data.toInt());
+        QDateEdit* edit=(QDateEdit*)editor;
+        edit->setDate(QDate::fromJulianDay(data.toLongLong()));
     }
         break;
 
@@ -126,8 +125,8 @@ void UserDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, cons
     case 6:
         //Age
     {
-        QSpinBox* box=(QSpinBox*)editor;
-        model->setData(index,box->value());
+        QDateEdit* edit=(QDateEdit*)editor;
+        model->setData(index,edit->date().toJulianDay());
     }
         return;
 

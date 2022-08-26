@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <QDate>
+
 using namespace std;
 
 class User
@@ -15,18 +17,18 @@ public:
     name(""),
     telephone(""),
     gender(-1),
-    age(-1){
+    birthDate(-1){
 
     }
 
-    User(string username,string password,int group,string name,string telephone,int gender,int age):
+    User(string username,string password,int group,string name,string telephone,int gender,long long birthDate):
         username(username),
         password(password),
         group(group),
         name(name),
         telephone(telephone),
         gender(gender),
-        age(age)
+        birthDate(birthDate)
         {
 
     }
@@ -85,12 +87,25 @@ public:
         return gender;
     }
 
-    void setAge(int age){
-        this->age=age;
+    void setBirthDate(long long birthDate){
+        this->birthDate=birthDate;
+    }
+
+    long long getBirthDate() const{
+        return birthDate;
     }
 
     int getAge() const{
-        return age;
+        QDate current=QDate::currentDate();
+        QDate birth=QDate::fromJulianDay(birthDate);
+
+        int yearDelta=current.year()-birth.year()-1;
+        birth.setDate(current.year(),birth.month(),birth.day());
+        if(current>=birth){
+            yearDelta++;
+        }
+
+        return yearDelta;
     }
 private:
     string username;
@@ -100,7 +115,7 @@ private:
     string name;
     string telephone;
     int gender;
-    int age;
+    long long birthDate;
 };
 
 #endif // USER_H

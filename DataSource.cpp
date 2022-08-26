@@ -129,7 +129,7 @@ void DataSource::loadFromFile() {
     string name;
     string telephone;
     int gender;
-    int age;
+    long long birthDate;
      */
 
     //Count first
@@ -143,12 +143,12 @@ void DataSource::loadFromFile() {
         string name;
         string telephone;
         int gender;
-        int age;
+        long long birthDate;
 
         fs>>username;
         fs>>password;
-        fs>>group>>name>>telephone>>gender>>age;
-        users.push_back(User(username,password,group,name,telephone,gender,age));
+        fs>>group>>name>>telephone>>gender>>birthDate;
+        users.push_back(User(username,password,group,name,telephone,gender,birthDate));
     }
 
     fs.close();
@@ -227,7 +227,7 @@ void DataSource::saveToFile() {
     string name;
     string telephone;
     int gender;
-    int age;
+    long long birthDate;
      */
     //Count firsr
     fs<<users.size()<<endl;
@@ -238,7 +238,7 @@ void DataSource::saveToFile() {
         <<user.getName()<<endl
         <<user.getTelephone()<<endl
         <<user.getGender()<<endl
-        <<user.getAge()<<endl;
+        <<user.getBirthDate()<<endl;
     }
 
     fs.close();

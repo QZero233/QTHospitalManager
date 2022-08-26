@@ -17,7 +17,7 @@ void UserService::checkUserData(const User& user) throw(invalid_argument){
         throw invalid_argument("Gender must be 0 or 1");
     }
 
-    if (user.getAge() <= 0) {
+    if (user.getAge() < 0) {
         throw invalid_argument("Age must be greater than 0");
     }
 }
