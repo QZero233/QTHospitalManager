@@ -59,3 +59,102 @@ bool DoctorService::existByDepartmentId(int departmentId){
     }
     return false;
 }
+
+int DoctorService::getCapacityByDoctorId(int doctorId){
+    vector<Duty> duties=dutyDao.getAllDuties();
+    int result=0;
+
+    for(Duty duty:duties){
+        if(duty.getDoctorId()==doctorId){
+            result+=duty.getCapacityEachPeriod()*
+                    Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod()).size();
+        }
+    }
+
+    return result;
+}
+
+int DoctorService::getCapacityByDoctorIdAndDate(int doctorId,QDate date){
+    vector<Duty> duties=dutyDao.getAllDuties();
+    int result=0;
+
+    for(Duty duty:duties){
+        if(duty.getDoctorId()==doctorId && duty.getDutyDate()==date.toJulianDay()){
+            result+=duty.getCapacityEachPeriod()*
+                    Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod()).size();
+        }
+    }
+
+    return result;
+}
+
+int DoctorService::getCapacityByDoctorIdAndDateAfter(int doctorId,QDate date){
+    vector<Duty> duties=dutyDao.getAllDuties();
+    int result=0;
+
+    for(Duty duty:duties){
+        if(duty.getDutyDate()<date.toJulianDay())
+            continue;
+
+        if(duty.getDoctorId()==doctorId){
+            result+=duty.getCapacityEachPeriod()*
+                    Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod()).size();
+        }
+    }
+
+    return result;
+}
+
+int DoctorService::getAppointmentCountByDoctorId(int doctorId){
+    vector<Appointment> appointments=appointmentDao.getAllAppointments();
+    int result=0;
+
+    for(Appointment appointment:appointments){
+        Duty duty=dutyDao.getDuty(appointment.getDutyId());
+        if(duty.getDoctorId()==doctorId)
+            result++;
+
+    }
+
+    return result;
+}
+
+int DoctorService::getAppointmentCountByDoctorIdAndDate(int doctorId,QDate date){
+    vector<Appointment> appointments=appointmentDao.getAllAppointments();
+    int result=0;
+
+    for(Appointment appointment:appointments){
+        Duty duty=dutyDao.getDuty(appointment.getDutyId());
+        if(duty.getDoctorId()==doctorId && duty.getDutyDate()==date.toJulianDay())
+            result++;
+
+    }
+
+    return result;
+}
+
+int DoctorService::getAppointmentCountByDoctorIdAndDateAfter(int doctorId,QDate date){
+    vector<Appointment> appointments=appointmentDao.getAllAppointments();
+    int result=0;
+
+    for(Appointment appointment:appointments){
+        Duty duty=dutyDao.getDuty(appointment.getDutyId());
+        if(duty.getDoctorId()==doctorId && duty.getDutyDate()>=date.toJulianDay())
+            result++;
+
+    }
+
+    return result;
+}
+
+vector<Doctor> DoctorService::getAllByDepartmentId(int departmentId){
+    vector<Doctor> doctors=dao.getAllDoctors();
+    vector<Doctor> result;
+
+    for(Doctor doctor:doctors){
+        if(doctor.getDepartmentId()==departmentId)
+            result.push_back(doctor);
+    }
+
+    return result;
+}

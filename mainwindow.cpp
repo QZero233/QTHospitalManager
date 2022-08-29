@@ -30,6 +30,8 @@
 #include "AddDoctorDialog.h"
 #include "AddDutyDialog.h"
 #include "AddUserDialog.h"
+#include "SelectDateDialog.h"
+#include "DoctorStatisticDialog.h"
 
 using namespace std;
 
@@ -224,6 +226,10 @@ void MainWindow::on_dataTable_doubleClicked(const QModelIndex &index)
         }else{
             showEditDepartmentDialog(id);
         }
+    }else if(mode==MODE_STATISTIC){
+        Department department=statisticModel->getDepartmentByIndex(index.row());
+        DoctorStatisticDialog dialog(department.getId());
+        dialog.exec();
     }
 }
 
@@ -281,7 +287,7 @@ void MainWindow::on_actionduties_triggered()
     }
 
     ui->dataTable->setModel(dutyModel);
-    ui->dataTable->setItemDelegate(dutyDelegate);
+    ui->dataTable->setItemDelegate(new ReadOnlyDelegate());
 
     controlMenuVisibilityByMode();
 }
@@ -349,6 +355,7 @@ void MainWindow::controlMenuVisibilityByMode(){
     ui->actionaddDoctor->setVisible(false);
     ui->actionaddDuty->setVisible(false);
     ui->actionAddUser->setVisible(false);
+    ui->actionDate->setVisible(false);
 
     switch(mode){
     case MODE_DEPARTMENT:
@@ -359,9 +366,12 @@ void MainWindow::controlMenuVisibilityByMode(){
         break;
     case MODE_DUTY:
         ui->actionaddDuty->setVisible(true);
+        ui->actionDate->setVisible(true);
         break;
     case MODE_USER:
         ui->actionAddUser->setVisible(true);
+        break;
+    case MODE_STATISTIC:
         break;
     }
 }
@@ -389,5 +399,30 @@ void MainWindow::on_actionAddUser_triggered()
         }  catch (exception& e) {
             QMessageBox::critical(this,"错误",e.what());
         }
+    }
+}
+
+void MainWindow::on_actionStastic_triggered()
+{
+    mode=MODE_STATISTIC;
+
+    if(statisticModel==NULL){
+        statisticModel=new StatisticModel(DepartmentService().getAllDepartments());
+    }
+
+    ui->dataTable->setModel(statisticModel);
+    ui->dataTable->setItemDelegate(statisticDelegate);
+
+    controlMenuVisibilityByMode();
+}
+
+void MainWindow::on_actionDate_triggered()
+{
+    SelectDateDialog dialog;
+    if(dialog.exec()==QDialog::Accepted){
+        QDate date=dialog.getDate();
+        int day=dialog.getDays();
+
+        dutyModel->setDateAndCount(date,day);
     }
 }

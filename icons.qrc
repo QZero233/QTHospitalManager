@@ -12,5 +12,7 @@
         <file>imgs/show_all.png</file>
         <file>imgs/select.png</file>
         <file>imgs/user.png</file>
+        <file>imgs/set_date.png</file>
+        <file>imgs/statistic.png</file>
     </qresource>
 </RCC>

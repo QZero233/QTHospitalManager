@@ -10,6 +10,8 @@
 #include "UserService.h"
 #include "AddUserDialog.h"
 
+#include "GlobalTempStorage.h"
+
 void addTestData();
 
 LoginWindow::LoginWindow(QWidget *parent) :

@@ -70,3 +70,65 @@ int DepartmentService::getCapacityById(int departmentId){
     }
     return result;
 }
+
+int DepartmentService::getCapacityByIdAndDateAfter(int departmentId,QDate date){
+    int result=0;
+    vector<Duty> duties=dutyDao.getAllDuties();
+    for(Duty duty:duties){
+        if(duty.getDutyDate()<date.toJulianDay())
+            continue;
+        Doctor doctor=doctorDao.getDoctor(duty.getDoctorId());
+        if(doctor.getDepartmentId()==departmentId){
+            int current=duty.getCapacityEachPeriod();
+            current*=Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod()).size();
+            result+=current;
+        }
+    }
+    return result;
+}
+
+
+int DepartmentService::getAppointmentCountByIdAndDateAfter(int departmentId,QDate date){
+    int result=0;
+
+    vector<Appointment> appoinemtnes=appointmentDao.getAllAppointments();
+    for(Appointment appointment:appoinemtnes){
+        Duty duty=dutyDao.getDuty(appointment.getDutyId());
+        if(duty.getDutyDate()<date.toJulianDay())
+            continue;
+
+        Doctor doctor=doctorDao.getDoctor(duty.getDoctorId());
+        if(doctor.getDepartmentId()==departmentId)
+            result++;
+    }
+
+    return result;
+}
+
+int DepartmentService::getCapacityByIdAndDate(int departmentId,QDate date){
+    int result=0;
+    vector<Duty> duties=dutyDao.getAllDuties();
+    for(Duty duty:duties){
+        Doctor doctor=doctorDao.getDoctor(duty.getDoctorId());
+        if(doctor.getDepartmentId()==departmentId && duty.getDutyDate()==date.toJulianDay()){
+            int current=duty.getCapacityEachPeriod();
+            current*=Appointment::getTimePeriodsByDutyTimePeriod(duty.getDutyTimePeriod()).size();
+            result+=current;
+        }
+    }
+    return result;
+}
+
+int DepartmentService::getAppointmentCountByIdAndDate(int departmentId,QDate date){
+    int result=0;
+
+    vector<Appointment> appoinemtnes=appointmentDao.getAllAppointments();
+    for(Appointment appointment:appoinemtnes){
+        Duty duty=dutyDao.getDuty(appointment.getDutyId());
+        Doctor doctor=doctorDao.getDoctor(duty.getDoctorId());
+        if(doctor.getDepartmentId()==departmentId && duty.getDutyDate()==date.toJulianDay())
+            result++;
+    }
+
+    return result;
+}

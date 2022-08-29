@@ -70,11 +70,13 @@
    <addaction name="actionaddDoctor"/>
    <addaction name="actionaddDuty"/>
    <addaction name="actionAddUser"/>
+   <addaction name="actionDate"/>
    <addaction name="separator"/>
    <addaction name="actiondepartments"/>
    <addaction name="actiondoctors"/>
    <addaction name="actionduties"/>
    <addaction name="actionUsers"/>
+   <addaction name="actionStastic"/>
   </widget>
   <action name="actionAdd">
    <property name="icon">
@@ -170,6 +172,30 @@
    </property>
    <property name="toolTip">
     <string>添加用户</string>
+   </property>
+  </action>
+  <action name="actionStastic">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/imgs/statistic.png</normaloff>:/icon/imgs/statistic.png</iconset>
+   </property>
+   <property name="text">
+    <string>统计数据</string>
+   </property>
+   <property name="toolTip">
+    <string>统计数据</string>
+   </property>
+  </action>
+  <action name="actionDate">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icon/imgs/set_date.png</normaloff>:/icon/imgs/set_date.png</iconset>
+   </property>
+   <property name="text">
+    <string>设置日期</string>
+   </property>
+   <property name="toolTip">
+    <string>设置日期</string>
    </property>
   </action>
  </widget>

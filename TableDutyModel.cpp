@@ -13,6 +13,17 @@ dayCount(dayCount)
     loadAMandPM();
 }
 
+void TableDutyModel::setDateAndCount(QDate date,int count){
+    startDate=date;
+    dayCount=count;
+
+    QModelIndex topLeft = index(0, 0);
+    QModelIndex bottomRight = index(rowCount(QModelIndex()) - 1, columnCount(QModelIndex()) - 1);
+
+    emit dataChanged(topLeft, bottomRight);
+    emit layoutChanged();
+}
+
 int TableDutyModel::rowCount(const QModelIndex &parent) const{
     return rows;
 }

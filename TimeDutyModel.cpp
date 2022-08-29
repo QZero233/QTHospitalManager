@@ -1,131 +1,89 @@
 #include "TimeDutyModel.h"
 #include "AppointmentService.h"
 
-TimeDutyModel::TimeDutyModel(vector<Duty> duties,QDate startDate,int dayCount,QObject *parent):
+#include "DoctorService.h"
+
+TimeDutyModel::TimeDutyModel(vector<Duty> duties,QDate currentDate,QObject *parent):
 QAbstractTableModel(parent),
 duties(duties),
-startDate(startDate),
-dayCount(dayCount){
+currentDate(currentDate)
+{
+    selectSatisfiedDuties();
+}
 
+void TimeDutyModel::selectSatisfiedDuties(){
+    satisfied.clear();
+
+    for(Duty duty:duties){
+        if(duty.getDutyDate()==currentDate.toJulianDay())
+            satisfied.push_back(duty);
+    }
 }
 
 int TimeDutyModel::columnCount(const QModelIndex &parent) const{
-    return dayCount;
+    //Doctor
+    //Period
+    //Status
+    return 3;
 }
 
 int TimeDutyModel::rowCount(const QModelIndex &parent) const{
-    return Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_AM).size()+
-            Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_PM).size();
+    return satisfied.size();
 }
 
 QVariant TimeDutyModel::data(const QModelIndex &index, int role) const{
     if(!index.isValid() || (role!=Qt::DisplayRole && role!=Qt::EditRole) )
         return QVariant();
 
-    long long date=startDate.addDays(index.column()).toJulianDay();
+    Duty duty=satisfied[index.row()];
 
-    vector<int> ams=Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_AM);
-    vector<int> pms=Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_PM);
+    if(index.column()==0){
+        //Doctor
+        Doctor doctor=DoctorService().getDoctor(duty.getDoctorId());
+        return doctor.getName().c_str();
+    }else if(index.column()==2){
+        //Status
+        int dutyCapacity=DutyService().getCapacityById(duty.getId());
+        int appointmentCount=AppointmentService().getCountByDutyId(duty.getId());
 
-    int row=index.row();
-    int period;
-    int dutyPeriod;
-    if(row>=ams.size()){
-        dutyPeriod=Duty::TIME_PERIOD_PM;
-        period=pms[row-ams.size()];
-    }else{
-        dutyPeriod=Duty::TIME_PERIOD_AM;
-        period=ams[row];
+        bool full=dutyCapacity-appointmentCount<=0;
+
+        if(role==Qt::EditRole)
+            return full;
+        else
+            return full?"已满":"剩余 "+QString::number(dutyCapacity-appointmentCount);
+    }else if(index.column()==1){
+        return duty.getDutyTimePeriod()==Duty::TIME_PERIOD_AM?"上午":"下午";
     }
 
-    AppointmentService appointmentService;
-
-    int totalCapacity=0;
-    int totalAppointmentCount=0;
-    for(Duty duty:duties){
-        if(duty.getDutyDate()!=date || duty.getDutyTimePeriod()!=dutyPeriod)
-            continue;
-
-        int appointmentCount=appointmentService.getCountByIdAndTimePeriod(duty.getId(),
-                                                                          period);
-        totalAppointmentCount+=appointmentCount;
-        totalCapacity+=duty.getCapacityEachPeriod();
-    }
-
-    bool full=totalCapacity-totalAppointmentCount<=0;
-    if(role==Qt::EditRole)
-        return full;
-
-    return (full?QString("已满"):"空闲") + "(" +QString::number(totalAppointmentCount)+"/"+QString::number(totalCapacity)+")";
 }
 
 QVariant TimeDutyModel::headerData(int section, Qt::Orientation orientation, int role) const{
     if(orientation==Qt::Horizontal && role==Qt::DisplayRole){
-        QDate date=startDate.addDays(section);
-        return date.toString("yyyy-MM-dd");
-    }else if(orientation==Qt::Vertical && role==Qt::DisplayRole){
-        vector<int> ams=Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_AM);
-        vector<int> pms=Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_PM);
-
-        int period;
-        if(section>=ams.size()){
-            period=pms[section-ams.size()];
-        }else{
-            period=ams[section];
+        switch (section) {
+        case 0:
+            return "医生";
+        case 2:
+            return "状态";
+        case 1:
+            return "班次";
         }
-
-        return Appointment::toStringPeriod(period).c_str();
     }
-
     return QVariant();
 }
 
-vector<Duty> TimeDutyModel::getDutiesByIndex(const QModelIndex& index){
-    vector<Duty> result;
+void TimeDutyModel::setCurrentDate(QDate currentDate){
+    this->currentDate=currentDate;
+    selectSatisfiedDuties();
 
-    long long date=startDate.addDays(index.column()).toJulianDay();
+    QModelIndex topLeft = index(0, 0);
+    QModelIndex bottomRight = index(rowCount(QModelIndex()) - 1, columnCount(QModelIndex()) - 1);
 
-    vector<int> ams=Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_AM);
-    vector<int> pms=Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_PM);
-
-    int row=index.row();
-    int period;
-    int dutyPeriod;
-    if(row>=ams.size()){
-        dutyPeriod=Duty::TIME_PERIOD_PM;
-        period=pms[row-ams.size()];
-    }else{
-        dutyPeriod=Duty::TIME_PERIOD_AM;
-        period=ams[row];
-    }
-
-    for(Duty duty:duties){
-        if(duty.getDutyDate()==date && duty.getDutyTimePeriod()==dutyPeriod){
-            result.push_back(duty);
-        }
-    }
-
-    return result;
+    emit dataChanged(topLeft, bottomRight);
+    emit layoutChanged();
 }
 
-int TimeDutyModel::getTimePeriodByIndex(const QModelIndex& index){
-    vector<int> ams=Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_AM);
-    vector<int> pms=Appointment::getTimePeriodsByDutyTimePeriod(Duty::TIME_PERIOD_PM);
-
-    int row=index.row();
-    int period;
-    int dutyPeriod;
-    if(row>=ams.size()){
-        dutyPeriod=Duty::TIME_PERIOD_PM;
-        period=pms[row-ams.size()];
-    }else{
-        dutyPeriod=Duty::TIME_PERIOD_AM;
-        period=ams[row];
-    }
-
-    return period;
+Duty TimeDutyModel::getByIndex(int index){
+    return satisfied[index];
 }
 
-bool TimeDutyModel::checkIfFull(const QModelIndex& index){
-    return data(index,Qt::EditRole).toBool();
-}

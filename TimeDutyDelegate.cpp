@@ -9,11 +9,13 @@ void TimeDutyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         return;
     QStyleOptionViewItem so = option;
 
-    bool full=index.model()->data(index,Qt::EditRole).toBool();
-    if(full){
-        so.palette.setColor(QPalette::Text,QColor(255,0,0));
-    }else{
-        so.palette.setColor(QPalette::Text,QColor(0,139,0));
+    if(index.column()==2){
+        bool full=index.model()->data(index,Qt::EditRole).toBool();
+        if(full){
+            so.palette.setColor(QPalette::Text,QColor(255,0,0));
+        }else{
+            so.palette.setColor(QPalette::Text,QColor(0,139,0));
+        }
     }
 
     QItemDelegate::paint(painter,so,index);

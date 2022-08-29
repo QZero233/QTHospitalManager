@@ -15,6 +15,8 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
+    void setDateAndCount(QDate date,int count);
+
     virtual void addDuty(const Duty& duty) override;
     void deleteDuty(int row,int column);
 private:

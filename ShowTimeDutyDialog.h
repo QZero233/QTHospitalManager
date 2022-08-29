@@ -3,8 +3,6 @@
 
 #include <QDialog>
 
-#include "User.h"
-
 #include "TimeDutyModel.h"
 
 namespace Ui {
@@ -16,19 +14,20 @@ class ShowTimeDutyDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ShowTimeDutyDialog(User user,vector<Duty> duties,QWidget *parent = nullptr);
+    explicit ShowTimeDutyDialog(User user,int departmentId,vector<Duty> duties,QWidget *parent = nullptr);
     ~ShowTimeDutyDialog();
-
-protected:
-    virtual void resizeEvent(QResizeEvent *event) override;
 
 private slots:
     void on_dataTable_doubleClicked(const QModelIndex &index);
+
+    void on_dateEdit_date_userDateChanged(const QDate &date);
 
 private:
     Ui::ShowTimeDutyDialog *ui;
 
     User user;
+
+    int departmentId;
 
     TimeDutyModel* model;
 };

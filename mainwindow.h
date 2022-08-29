@@ -22,6 +22,11 @@
 
 #include "TableDutyModel.h"
 
+#include "StatisticModel.h"
+#include "StatisticDelegate.h"
+
+#include "ReadOnlyDelegate.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -61,6 +66,10 @@ private slots:
 
     void on_actionAddUser_triggered();
 
+    void on_actionStastic_triggered();
+
+    void on_actionDate_triggered();
+
 protected:
     virtual void resizeEvent(QResizeEvent *event) override;
 
@@ -73,11 +82,13 @@ private:
     TableDutyModel* dutyModel=NULL;
     DoctorModel* doctorModel=NULL;
     UserModel* userModel=NULL;
+    StatisticModel* statisticModel=NULL;
 
     DepartmentDelegate* delegate=new DepartmentDelegate();
-    DutyDelegate* dutyDelegate=new DutyDelegate();
+    ReadOnlyDelegate* dutyDelegate=new ReadOnlyDelegate();
     DoctorDelegate* doctorDelegate=new DoctorDelegate();
     UserDelegate* userDelegate=new UserDelegate();
+    StatisticDelegate* statisticDelegate=new StatisticDelegate();
 
     DepartmentService departmentService;
 
@@ -101,5 +112,6 @@ private:
     static const int MODE_DUTY=1;
     static const int MODE_DOCTOR=2;
     static const int MODE_USER=3;
+    static const int MODE_STATISTIC=4;
 };
 #endif // MAINWINDOW_H

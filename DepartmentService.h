@@ -30,6 +30,12 @@ public:
     int getAppointmentCountById(int departmentId);
     int getCapacityById(int departmentId);
 
+    int getCapacityByIdAndDateAfter(int departmentId,QDate date);
+    int getAppointmentCountByIdAndDateAfter(int departmentId,QDate date);
+
+    int getCapacityByIdAndDate(int departmentId,QDate date);
+    int getAppointmentCountByIdAndDate(int departmentId,QDate date);
+
     vector<Department> getAllDepartments();
 };
 

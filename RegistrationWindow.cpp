@@ -63,8 +63,7 @@ void RegistrationWindow::on_dataTable_doubleClicked(const QModelIndex &index)
         return;
     //Double click to department duties
     Department department=model->getDepartmentByIndex(index.row());
-    ShowTimeDutyDialog dialog(currentUser,DutyService()
-                                      .getAllByDepartmentId(department.getId()));
+    ShowTimeDutyDialog dialog(currentUser,department.getId(),DutyService().getAllByDepartmentId(department.getId()));
     dialog.exec();
 }
 
