@@ -22,22 +22,17 @@ SOURCES += \
     DepartmentDelegate.cpp \
     DepartmentModel.cpp \
     DepartmentService.cpp \
-    Doctor.cpp \
     DoctorDao.cpp \
     DoctorDelegate.cpp \
     DoctorModel.cpp \
     DoctorService.cpp \
     DoctorStatisticDialog.cpp \
     DoctorStatisticModel.cpp \
-    Duty.cpp \
     DutyDao.cpp \
     DutyDelegate.cpp \
     DutyModel.cpp \
     DutyService.cpp \
-    InputPasswordDialog.cpp \
-    InputTelDialog.cpp \
     LoginWindow.cpp \
-    QueryAppointmentDialog.cpp \
     ReadOnlyDelegate.cpp \
     RegistrationWindow.cpp \
     SelectDateDialog.cpp \
@@ -88,10 +83,7 @@ HEADERS += \
     DutyDelegate.h \
     DutyModel.h \
     DutyService.h \
-    InputPasswordDialog.h \
-    InputTelDialog.h \
     LoginWindow.h \
-    QueryAppointmentDialog.h \
     ReadOnlyDelegate.h \
     RegistrationWindow.h \
     SelectDateDialog.h \
@@ -119,10 +111,7 @@ FORMS += \
     AddDutyDialog.ui \
     AddUserDialog.ui \
     DoctorStatisticDialog.ui \
-    InputPasswordDialog.ui \
-    InputTelDialog.ui \
     LoginWindow.ui \
-    QueryAppointmentDialog.ui \
     RegistrationWindow.ui \
     SelectDateDialog.ui \
     SelectDutyDialog.ui \

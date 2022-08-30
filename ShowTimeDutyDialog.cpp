@@ -8,7 +8,6 @@
 #include "DepartmentService.h"
 #include "AddAppointmentDialog.h"
 
-#include "GlobalTempStorage.h"
 #include "AppointmentService.h"
 
 #include <QMessageBox>
