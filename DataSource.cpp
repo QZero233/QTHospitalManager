@@ -31,6 +31,15 @@ void DataSource::loadFromFile() {
     appointments.clear();
     doctors.clear();
     duties.clear();
+    users.clear();
+
+    if(!fs){
+        //Add default admin
+        users.push_back(User("admin","123456",User::GROUP_ADMIN,"DefaultAdmin","123456",
+                             User::GENDER_MALE,QDate::currentDate().toJulianDay()));
+        return;
+    }
+
 
     while(true){
         int id;
